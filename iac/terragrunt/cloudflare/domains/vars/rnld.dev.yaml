@@ -1,0 +1,6 @@
+cname_records:
+  landing_page:
+    enabled: true
+    name: www
+    value: cname.vercel-dns.com
+    ttl: 300
