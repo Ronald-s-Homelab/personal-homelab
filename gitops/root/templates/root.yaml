@@ -25,4 +25,4 @@ spec:
         path: '{{ printf "{{path}}" }}'
       destination:
         name: in-cluster
-        namespace: argocd-system
+        namespace: '{{ printf "{{path}}" }}'
