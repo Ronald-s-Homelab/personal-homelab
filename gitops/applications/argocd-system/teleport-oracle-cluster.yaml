@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: teleport-server-app
+  namespace: argocd-system
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://charts.releases.teleport.dev
+    chart: teleport-cluster
+    targetRevision: 9.0.4
+    helm:
+      releaseName: teleport
+      values: |
+        acme: true
+        acmeEmail: r@ronaldmiranda.com.br
+        acmeURI: ""
+        chartMode: standalone
+        clusterName: teleport.ronaldmiranda.com.br
+        enterprise: false
+        image: ronaldmiranda/teleport-arm
+        imagePullPolicy: Always
+        labels: {}
+        logLevel: INFO
+        podSecurityPolicy:
+          enabled: true
+        standalone:
+          existingClaimName: ""
+          volumeSize: 10Gi
+        teleportVersionOverride: ""
+  destination:
+    name: teleport-oracle-cluster
+    namespace: teleport-system
+  syncPolicy:
+    automated:
+      prune: true
