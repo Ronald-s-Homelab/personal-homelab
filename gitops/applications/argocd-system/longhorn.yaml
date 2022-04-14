@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+  namespace: argocd-system
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/longhorn/charts.git
+    targetRevision: HEAD
+    path: charts/longhorn
+    helm:
+      releaseName: longhorn
+      values: |
+        persistence:
+          defaultClassReplicaCount: 1
+        csi:
+          attacherReplicaCount: 1
+          provisionerReplicaCount: 1
+          resizerReplicaCount: 1
+          snapshotterReplicaCount: 1
+        defaultSettings:
+          backupTarget: s3://longhorn-backups@us-east-1/
+          backupTargetCredentialSecret: local-minio-secret
+
+        ingress:
+          enabled: true
+          ingressClassName: nginx
+          host: "longhorn.ronaldmiranda.com.br"
+          tls: true
+          tlsSecret: ronaldmiranda-cert
+          annotations:
+            nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+            nginx.ingress.kubernetes.io/rewrite-target: /
+            nginx.ingress.kubernetes.io/auth-response-headers: Remote-User,Remote-Name,Remote-Groups,Remote-Email
+            nginx.ingress.kubernetes.io/auth-signin: https://auth.ronaldmiranda.com.br
+            nginx.ingress.kubernetes.io/auth-snippet: |
+              proxy_set_header X-Forwarded-Method $request_method;
+            nginx.ingress.kubernetes.io/auth-url: http://authelia.authelia-system.svc.cluster.local/api/verify
+            nginx.ingress.kubernetes.io/configuration-snippet: |
+              more_set_headers "server: hide";
+              more_set_headers "X-Content-Type-Options: nosniff";
+              more_set_headers "X-Frame-Options: DENY";
+              more_set_headers "X-Xss-Protection: 1";
+              proxy_set_header X-Forwarded-Method $request_method;
+  destination:
+    name: in-cluster
+    namespace: longhorn-system
+  syncPolicy:
+    automated:
+      prune: true
