@@ -16,6 +16,8 @@ spec:
     spec:
       project: default
       syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
         automated:
           prune: true
           selfHeal: true
@@ -25,4 +27,4 @@ spec:
         path: '{{ printf "{{path}}" }}'
       destination:
         name: in-cluster
-        namespace: '{{ printf "{{path}}" }}'
+        namespace: '{{ printf "{{path.basename}}" }}'
