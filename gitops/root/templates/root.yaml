@@ -1,18 +1,28 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: homelab-root
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
+  namespace: argocd-system
 spec:
-  destination:
-    name: in-cluster
-    namespace: argocd-system
-  project: default
-  source:
-    path: gitops/applications/
-    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-    targetRevision: main
-  syncPolicy:
-    automated:
-      prune: true
+  generators:
+  - git:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      revision: main
+      directories:
+      - path: gitops/applications/*
+  template:
+    metadata:
+      name: '{{ printf "{{path.basename}}" }}'
+    spec:
+      project: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+      source:
+        repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+        targetRevision: main
+        path: '{{ printf "{{path}}" }}'
+      destination:
+        name: in-cluster
+        namespace: argocd-system
