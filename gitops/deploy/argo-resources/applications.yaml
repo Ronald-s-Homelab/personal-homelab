@@ -212,11 +212,6 @@ applications:
               memory: 320Mi
           podLabels:
             app: external-secrets
-          podAnnotations:
-            "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
-          webhook:
-            podAnnotations:
-              "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
     destination:
       name: in-cluster
       namespace: external-secrets-system
