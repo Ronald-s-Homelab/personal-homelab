@@ -1,0 +1,41 @@
+vms:
+  master1:
+    desc: kubernetes master
+    cores: 4
+    sockets: 1
+    memory: 2048
+    user: ronald
+    disk-size: 40G
+    macaddr: 12:7d:90:6d:70:cf
+  master2:
+    desc: kubernetes master
+    cores: 4
+    sockets: 1
+    memory: 2048
+    user: ronald
+    disk-size: 40G
+    macaddr: d6:67:e2:53:db:0f
+  worker1:
+    desc: kubernetes worker
+    cores: 4
+    sockets: 1
+    memory: 8000
+    user: ronald
+    disk-size: 40G
+    macaddr: DA:FA:79:C2:DE:1B
+  worker2:
+    desc: kubernetes worker
+    cores: 4
+    sockets: 1
+    memory: 8000
+    user: ronald
+    disk-size: 40G
+    macaddr: BE:31:8E:F7:9C:0A
+  jumpbox:
+    desc: jumpbox
+    cores: 1
+    sockets: 1
+    memory: 2048
+    user: ronald
+    disk-size: 10G
+    macaddr: aa:2e:39:91:ac:3f

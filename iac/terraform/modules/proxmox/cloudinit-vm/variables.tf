@@ -18,6 +18,7 @@ variable "defaults" {
     sockets = optional(number)
     memory  = optional(number)
 
+    bridge   = optional(string)
     macaddr  = optional(string)
     user     = optional(string)
     ipconfig = optional(string)

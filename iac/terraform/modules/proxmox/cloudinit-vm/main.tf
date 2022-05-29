@@ -20,7 +20,7 @@ resource "proxmox_vm_qemu" "cloudinit-test" {
 
   network {
     model   = "virtio"
-    bridge  = "vmbr2"
+    bridge  = try(each.value.bridge, "vmbr2")
     macaddr = try(each.value.macaddr, null)
   }
 
