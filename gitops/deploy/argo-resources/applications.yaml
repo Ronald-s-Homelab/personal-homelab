@@ -77,7 +77,7 @@ applications:
     project: default
     source:
       repoURL: https://helm.mittwald.de
-      targetRevision: main
+      targetRevision: 2.6.3
       chart: kubernetes-replicator
       helm:
         releaseName: kubernetes-replicator
