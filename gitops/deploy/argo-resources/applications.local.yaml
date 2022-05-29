@@ -1,0 +1,34 @@
+applications:
+  cert-manager-certs:
+    enabled: true
+    namespace: argo-system
+    project: default
+    source:
+      repoURL:
+      targetRevision: main
+      chart: cert-manager-certs
+      helm:
+        releaseName:
+        values: |
+          certificate:
+            commonName: "*.ronaldmiranda.com.br"
+            secretName: ronaldmiranda-cert
+          issuer:
+            acme:
+              server: https://acme-v02.api.letsencrypt.org/directory
+              cloudflare:
+                email: r@ronaldmiranda.com.br
+                clientSecretSecretRef:
+                  name: cloudflare-api-token
+                  key: api-token
+              solvers:
+                - hostedZoneName: ronaldmiranda.com.br
+                  dnsNames:
+                    - "ronaldmiranda.com.br"
+                    - "*.ronaldmiranda.com.br"
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: cert-manager
+    syncPolicy:
+      automated:
+        prune: true

@@ -1,0 +1,34 @@
+{{- $certificate := .Values.certificate }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Release.Name }}-cert
+  annotations:
+    helm.sh/hook-weight: "2"
+spec:
+  subject:
+    organizations:
+      - Ronald's Home
+    countries:
+      - BR
+    organizationalUnits:
+      - DevOps
+    localities:
+      - Recife
+    provinces:
+      - PE
+  commonName: "{{ $certificate.commonName }}"
+  duration: 2160h # 90d
+  renewBefore: 360h # 15d
+  dnsNames:
+    {{- range $key, $value := .Values.issuer.acme.solvers }}
+    {{- if $value.dnsNames }}
+      {{- toYaml $value.dnsNames | nindent 4 }}
+    {{- end }}
+    {{- end }}
+  secretName: {{ $certificate.secretName }}
+  issuerRef:
+    kind: Issuer
+    name: {{ .Release.Name }}-issuer
+  usages: ["digital signature", "key encipherment"]
+---

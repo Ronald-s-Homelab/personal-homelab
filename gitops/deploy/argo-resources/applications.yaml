@@ -189,6 +189,7 @@ applications:
         prune: true
       syncOptions:
         - CreateNamespace=true
+
   external-secrets:
     enabled: true
     namespace: argocd-system

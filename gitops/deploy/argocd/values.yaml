@@ -27,11 +27,12 @@ server:
       source:
         repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
         targetRevision: main
-        path: ./stable/argo-resources
+        path: gitops/stable/argo-resources
         helm:
           valueFiles:
-            - ./deploy/argo-resources/applications.yaml
-            - ./deploy/argo-resources/projects.yaml
+            - ../../deploy/argo-resources/applications.local.yaml
+            - ../../deploy/argo-resources/applications.yaml
+            - ../../deploy/argo-resources/projects.yaml
       destination:
         name: in-cluster
         namespace: argocd-system
