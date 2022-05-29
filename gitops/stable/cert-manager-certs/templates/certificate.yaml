@@ -32,7 +32,6 @@ spec:
     name: {{ .Release.Name }}-issuer
   secretTemplate:
     annotations:
-      replicator.v1.mittwald.de/replication-allowed: "true"
-      replicator.v1.mittwald.de/replication-allowed-namespaces: "*"
+      replicator.v1.mittwald.de/replicate-to-matching: "cert-manager-tls=true"
   usages: ["digital signature", "key encipherment"]
 ---
