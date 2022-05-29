@@ -189,6 +189,42 @@ applications:
         prune: true
       syncOptions:
         - CreateNamespace=true
+  external-secrets:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://charts.external-secrets.io
+      chart: external-secrets
+      targetRevision: v0.4.4
+      helm:
+        releaseName: external-secrets
+        values: |
+          replicaCount: 1
+          installCRDs: false
+          leaderElect: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 320Mi
+            limits:
+              cpu: 100m
+              memory: 320Mi
+          podLabels:
+            app: external-secrets
+          podAnnotations:
+            "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
+          webhook:
+            podAnnotations:
+              "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
+    destination:
+      name: in-cluster
+      namespace: external-secrets-system
+    syncPolicy:
+      automated:
+        prune: true
+      syncOptions:
+        - CreateNamespace=true
 
   teleport-server-app:
     enabled: true
