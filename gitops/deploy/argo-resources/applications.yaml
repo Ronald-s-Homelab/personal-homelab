@@ -63,7 +63,7 @@ applications:
               addresses:
               - 10.1.100.60-10.1.100.69
     destination:
-      server: https://kubernetes.default.svc
+      name: in-cluster
       namespace: metallb-system
     syncPolicy:
       automated:

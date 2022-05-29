@@ -2,7 +2,7 @@ applications:
   cert-manager-certs:
     enabled: true
     namespace: argocd-system
-    project: home-k8s
+    project: default
     source:
       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
       targetRevision: main
@@ -28,7 +28,7 @@ applications:
                     - "ronaldmiranda.com.br"
                     - "*.ronaldmiranda.com.br"
     destination:
-      server: https://kubernetes.default.svc
+      name: in-cluster
       namespace: cert-manager
     syncPolicy:
       automated:
