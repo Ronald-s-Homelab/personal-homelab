@@ -1,9 +1,5 @@
-include {
-  path = find_in_parent_folders()
-}
-
-include "backend" {
-  path   = "../backend.hcl"
+include "root" {
+  path   = find_in_parent_folders()
   expose = true
 }
 
@@ -13,5 +9,5 @@ terraform {
 
 inputs = merge(
   { zone_id = "b157ae325c6a0ba01fb86c6b16cfda5d" },
-  yamldecode(file(find_in_parent_folders("vars/${include.backend.locals.module_dir}.yaml")))
+  yamldecode(file(find_in_parent_folders("vars/${include.root.locals.module_dir}.yaml")))
 )
