@@ -71,6 +71,36 @@ applications:
       syncOptions:
         - CreateNamespace=true
 
+  replicator:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://helm.mittwald.de
+      targetRevision: main
+      chart: kubernetes-replicator
+      helm:
+        releaseName: kubernetes-replicator
+        values: |
+          serviceAccount:
+            create: true
+            annotations: {}
+            name:
+            privileges:
+              - apiGroups: [ "", "apps", "extensions" ]
+                resources: ["secrets", "configmaps", "roles", "rolebindings",
+                "cronjobs", "deployments", "events", "ingresses", "jobs", "pods", "pods/attach", "pods/exec", "pods/log", "pods/portforward", "services"]
+              - apiGroups: [ "batch" ]
+                resources:  ["configmaps", "cronjobs", "deployments", "events", "ingresses", "jobs", "pods", "pods/attach", "pods/exec", "pods/log", "pods/portforward", "services"]
+    destination:
+      name: in-cluster
+      namespace: replicator-system
+    syncPolicy:
+      automated:
+        prune: true
+      syncOptions:
+        - CreateNamespace=true
+
   longhorn:
     enabled: true
     namespace: argocd-system

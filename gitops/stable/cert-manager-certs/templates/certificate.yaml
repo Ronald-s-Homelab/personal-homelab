@@ -30,5 +30,8 @@ spec:
   issuerRef:
     kind: Issuer
     name: {{ .Release.Name }}-issuer
+  secretTemplate:
+    annotations:
+      replicator.v1.mittwald.de/replicate-to-matching: "cert-manager-tls=true"
   usages: ["digital signature", "key encipherment"]
 ---
