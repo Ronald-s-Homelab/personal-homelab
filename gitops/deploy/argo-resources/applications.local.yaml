@@ -1,7 +1,7 @@
 applications:
   cert-manager-certs:
     enabled: true
-    namespace: argo-system
+    namespace: argocd-system
     project: home-k8s
     source:
       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
