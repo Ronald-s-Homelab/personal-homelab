@@ -6,7 +6,6 @@ applications:
     source:
       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
       targetRevision: main
-      chart: cert-manager-certs
       path: gitops/stable/cert-manager-certs
       helm:
         releaseName: cert-manager-certs
