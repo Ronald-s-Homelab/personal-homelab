@@ -61,7 +61,7 @@ applications:
             - name: pool
               protocol: layer2
               addresses:
-              - 10.1.100.60-10.1.100.69
+              - 10.11.100.200-10.11.100.250
     destination:
       name: in-cluster
       namespace: metallb-system
@@ -141,7 +141,7 @@ applications:
             configMapNamespace: nginx-system
             service:
               enabled: true
-              loadBalancerIP: 10.1.100.200
+              loadBalancerIP: 10.11.100.200
               externalTrafficPolicy: Local
             config:
               custom-http-errors: 413,502,503,504
