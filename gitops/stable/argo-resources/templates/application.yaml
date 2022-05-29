@@ -1,0 +1,23 @@
+{{ range $key, $value := .Values.applications }}
+{{ if $value.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ $key }}
+  namespace: {{ $value.namespace }}
+  {{- with $value.labels }}
+  labels: {{ . | toYaml | nindent 4}}
+  {{ end }}
+  {{- with $value.annotations }}
+  annotations: {{ . | toYaml | nindent 4}}
+  {{ end }}
+spec:
+  project: {{ $value.project }}
+  source: {{ $value.source | toYaml | nindent 4 }}
+  destination: {{ $value.destination | toYaml | nindent 4 }}
+  {{- with $value.syncPolicy }}
+  syncPolicy: {{ . | toYaml | nindent 4 }}
+  {{- end }}
+---
+{{ end }}
+{{ end }}

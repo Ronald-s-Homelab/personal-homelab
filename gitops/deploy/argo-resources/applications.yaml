@@ -1,0 +1,219 @@
+applications:
+  cert-manager:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://charts.jetstack.io
+      targetRevision: 1.8.0
+      chart: cert-manager
+      helm:
+        releaseName: cert-manager
+        values: |
+          installCRDs: true
+          replicaCount: 1
+          nodeSelector:
+            kubernetes.io/os: linux
+          image:
+            repository: quay.io/jetstack/cert-manager-controller
+          extraArgs:
+            - --dns01-recursive-nameservers=10.1.100.1:53
+          cainjector:
+            replicaCount: 1
+            image:
+              repository: quay.io/jetstack/cert-manager-cainjector
+            nodeSelector:
+              kubernetes.io/os: linux
+          webhook:
+            replicaCount: 1
+            image:
+              repository: quay.io/jetstack/cert-manager-webhook
+            nodeSelector:
+              kubernetes.io/os: linux
+          global:
+            leaderElection:
+              namespace: "cert-manager"
+              leaseDuration: 30s
+              renewDeadline: 25s
+              retryPeriod: 15s
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: cert-manager
+    syncPolicy:
+      automated:
+        prune: true
+
+  longhorn:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/longhorn/charts.git
+      targetRevision: HEAD
+      path: charts/longhorn
+      helm:
+        releaseName: longhorn
+        values: |
+          persistence:
+            defaultClassReplicaCount: 1
+          csi:
+            attacherReplicaCount: 1
+            provisionerReplicaCount: 1
+            resizerReplicaCount: 1
+            snapshotterReplicaCount: 1
+          defaultSettings:
+            backupTarget: s3://longhorn-backups@us-east-1/
+            backupTargetCredentialSecret: local-minio-secret
+
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            host: "longhorn.ronaldmiranda.com.br"
+            tls: true
+            tlsSecret: ronaldmiranda-cert
+            annotations:
+              nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+              nginx.ingress.kubernetes.io/rewrite-target: /
+              nginx.ingress.kubernetes.io/auth-response-headers: Remote-User,Remote-Name,Remote-Groups,Remote-Email
+              nginx.ingress.kubernetes.io/auth-signin: https://auth.ronaldmiranda.com.br
+              nginx.ingress.kubernetes.io/auth-snippet: |
+                proxy_set_header X-Forwarded-Method $request_method;
+              nginx.ingress.kubernetes.io/auth-url: http://authelia.authelia-system.svc.cluster.local/api/verify
+              nginx.ingress.kubernetes.io/configuration-snippet: |
+                more_set_headers "server: hide";
+                more_set_headers "X-Content-Type-Options: nosniff";
+                more_set_headers "X-Frame-Options: DENY";
+                more_set_headers "X-Xss-Protection: 1";
+                proxy_set_header X-Forwarded-Method $request_method;
+    destination:
+      name: in-cluster
+      namespace: longhorn-system
+    syncPolicy:
+      automated:
+        prune: true
+
+  nginx-ingress:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/kubernetes/ingress-nginx.git
+      targetRevision: HEAD
+      path: charts/ingress-nginx
+      helm:
+        values: |
+          controller:
+            kind: DaemonSet
+            extraArgs:
+              enable-ssl-passthrough: ""
+            publishService:
+              enabled: true
+            configMapNamespace: nginx-system
+            service:
+              enabled: true
+              loadBalancerIP: 10.1.100.200
+              externalTrafficPolicy: Local
+            config:
+              custom-http-errors: 413,502,503,504
+              generate-request-id: "true"
+              proxy-buffer-size: "4k"
+              proxy-body-size: "50m"
+              proxy-read-timeout: "10"
+              client-max-body-size: "200m"
+              use-forwarded-headers: "true"
+              use-gzip: "false"
+              enable-brotli: "true"
+              brotli-types: "*"
+              brotli-level: "7"
+              proxy-connect-timeout: "10"
+              ssl-early-data: "true"
+              ssl-protocols: "TLSv1.2 TLSv1.3"
+              ssl_buffer_size: "2k"
+              ssl-session-cache-size: "1m"
+              ssl-session-tickets: "false"
+              keep-alive-requests: "1000000"
+              upstream-keepalive-requests: "1000000"
+              http-snippet: |
+                proxy_cache_path /tmp/nginx-cache levels=1:2 keys_zone=static-cache:2m max_size=100m inactive=7d use_temp_path=off;
+                proxy_cache_key $scheme$proxy_host$request_uri;
+                proxy_cache_lock on;
+                proxy_cache_use_stale updating;
+              log-format-escape-json: "true"
+              log-format-upstream: '{
+                "body_bytes_sent": "$body_bytes_sent",
+                "bytes_sent": "$bytes_sent",
+                "http_host": "$host",
+                "http_referer": "$http_referer",
+                "http_user_agent": "$http_user_agent",
+                "http_x_forwarded_for": "$http_x_forwarded_for",
+                "http_x_forwarded_proto": "$http_x_forwarded_proto",
+                "http_x_real_ip": "$http_x_real_ip",
+                "kubernetes_ingress_name": "$ingress_name",
+                "kubernetes_namespace": "$namespace",
+                "kubernetes_service_name": "$service_name",
+                "kubernetes_service_port": "$service_port",
+                "proxy_protocol_addr": "$proxy_protocol_addr",
+                "proxy_upstream_name": "$proxy_upstream_name",
+                "remote_addr": "$remote_addr",
+                "remote_user": "$remote_user",
+                "request_id": "$req_id",
+                "request_length": "$request_length",
+                "request_method": "$request_method",
+                "request_path": "$uri",
+                "request_proto": "$server_protocol",
+                "request_query": "$args",
+                "request_time": "$request_time",
+                "request_uri": "$request_uri",
+                "server_name": "$server_name",
+                "server_port": "$server_port",
+                "ssl_cipher": "$ssl_cipher",
+                "ssl_protocol": "$ssl_protocol",
+                "ssl_session_id": "$ssl_session_id",
+                "status": "$status",
+                "time": "$time_iso8601",
+                "time_local": "$time_local",
+                "upstream_addr": "$upstream_addr",
+                "upstream_response_length": "$upstream_response_length",
+                "upstream_response_time": "$upstream_response_time",
+                "upstream_status": "$upstream_status"
+                }'
+    destination:
+      name: in-cluster
+      namespace: nginx-system
+    syncPolicy:
+      automated:
+        prune: true
+
+  teleport-server-app:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://charts.releases.teleport.dev
+      chart: teleport-cluster
+      targetRevision: 9.0.4
+      helm:
+        releaseName: teleport
+        values: |
+          acme: true
+          acmeEmail: r@ronaldmiranda.com.br
+          acmeURI: ""
+          chartMode: standalone
+          clusterName: teleport.ronaldmiranda.com.br
+          enterprise: false
+          image: ronaldmiranda/teleport-arm
+          imagePullPolicy: Always
+          labels: {}
+          logLevel: INFO
+          podSecurityPolicy:
+            enabled: true
+          standalone:
+            existingClaimName: ""
+            volumeSize: 10Gi
+          teleportVersionOverride: ""
+    destination:
+      name: teleport-oracle-cluster
+      namespace: teleport-system
+    syncPolicy:
+      automated:
+        prune: true

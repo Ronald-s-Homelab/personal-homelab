@@ -1,0 +1,4 @@
+{{ with .Values.applicationsets }}
+{{ range $key, $value := . }}
+{{ end }}
+{{ end }}

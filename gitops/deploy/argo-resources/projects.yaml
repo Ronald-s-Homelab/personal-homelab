@@ -1,0 +1,12 @@
+projects:
+  home-k8s:
+    enabled: true
+    description: A cert-manager project.
+    sourceRepos:
+      - "*"
+    destinations:
+      - namespace: cert-manager
+        name: in-cluster
+    namespaceResourceWhitelist:
+      - group: "*"
+        kind: "*"
