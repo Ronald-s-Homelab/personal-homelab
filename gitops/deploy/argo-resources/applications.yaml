@@ -42,6 +42,8 @@ applications:
     syncPolicy:
       automated:
         prune: true
+      syncOptions:
+        - CreateNamespace=true
 
   longhorn:
     enabled: true
@@ -91,6 +93,8 @@ applications:
     syncPolicy:
       automated:
         prune: true
+      syncOptions:
+        - CreateNamespace=true
 
   nginx-ingress:
     enabled: true
@@ -183,6 +187,8 @@ applications:
     syncPolicy:
       automated:
         prune: true
+      syncOptions:
+        - CreateNamespace=true
 
   teleport-server-app:
     enabled: true
@@ -217,3 +223,5 @@ applications:
     syncPolicy:
       automated:
         prune: true
+      syncOptions:
+        - CreateNamespace=true
