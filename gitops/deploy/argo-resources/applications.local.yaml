@@ -2,13 +2,14 @@ applications:
   cert-manager-certs:
     enabled: true
     namespace: argo-system
-    project: default
+    project: home-k8s
     source:
-      repoURL:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
       targetRevision: main
       chart: cert-manager-certs
+      path: gitops/stable/cert-manager-certs
       helm:
-        releaseName:
+        releaseName: cert-manager-certs
         values: |
           certificate:
             commonName: "*.ronaldmiranda.com.br"
