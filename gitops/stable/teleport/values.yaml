@@ -9,7 +9,7 @@ teleport-cluster:
       enabled: true
       issuerName: letsencrypt-prod
       issuerKind: ClusterIssuer
-    replicaCount: 2
+    replicaCount: 1
   extraVolumes:
     - name: teleport-secret
       secret:
