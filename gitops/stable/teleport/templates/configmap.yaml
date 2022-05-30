@@ -13,8 +13,7 @@ data:
         max_connections: 100
         max_users: 5
     auth_service:
-      enabled: true
-      listen_addr: 0.0.0.0:3025
+      enabled: yes
       cluster_name: teleport.ronaldmiranda.com.br
       authentication:
         second_factor: "on"
@@ -24,13 +23,13 @@ data:
       tokens:
         - 'kube:/mnt/secrets/joinpasswd'
     proxy_service:
-      enabled: true
+      enabled: yes
       public_addr: 'teleport.ronaldmiranda.com.br:443'
+      web_listen_addr: 0.0.0.0:443
       https_keypairs:
         - key_file: /etc/teleport-tls/tls.key
           cert_file: /etc/teleport-tls/tls.crt
     kubernetes_service:
-      enabled: true
-      listen_addr: 0.0.0.0:443
+      enabled: yes
     ssh_service:
-      enabled: true
+      enabled: yes

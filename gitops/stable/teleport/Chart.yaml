@@ -5,7 +5,7 @@ appVersion: v0.0.1
 
 dependencies:
   - name: teleport-cluster
-    version: "9.0.4"
+    version: "9.3.0"
     repository: "https://charts.releases.teleport.dev"
 
 maintainers:
