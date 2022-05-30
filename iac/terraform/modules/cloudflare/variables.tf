@@ -24,6 +24,7 @@ variable "txt_records" {
     enabled = bool
     name    = string
     value   = string
+    ttl     = number
   }))
   default = {}
 }
@@ -38,5 +39,12 @@ variable "cname_records" {
 }
 
 variable "zone_id" {
+  type = string
+}
+
+variable CLOUDFLARE_EMAIL {
+  type = string
+}
+variable CLOUDFLARE_API_KEY {
   type = string
 }
