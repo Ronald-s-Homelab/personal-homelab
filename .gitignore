@@ -1,6 +1,7 @@
 # Local .terraform and .terragrunt-cache directories
 **/.terraform/*
 **/.terragrunt-cache/*
+**/.terraform.lock.hcl
 
 # .tfstate files
 *.tfstate

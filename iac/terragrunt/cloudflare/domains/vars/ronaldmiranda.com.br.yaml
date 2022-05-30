@@ -14,11 +14,6 @@ a_records:
     name: teleport
     ttl: 300
     value: 140.238.239.7
-  vpnvm:
-    enabled: true
-    name: vpnvm
-    ttl: 300
-    value: 140.238.239.7
 
 cname_records:
   cftv:
@@ -74,15 +69,19 @@ txt_records:
     enabled: true
     name: _dmarc
     value: v=DMARC1; p=none; rua=mailto:no-reply@ronaldmiranda.com.br
+    ttl: 300
   google_domain_key:
     enabled: true
     name: google._domainkey
     value: v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjCe+GFw2XUnOKooLVOJM697sPsxn720OENsYre7XE7bOm2YXxvsapz8WSErUtAPF73i75jQrd0XrRtVVPr3NhWUro28QR5PWfm5s6SWg8tbNKaq6xEvqma1WoBxK3eIMo8m8yWfKdbjFBzqoUQb/z8E6qoYQ/u2AmVou9UaaWxkKAON4GfFZtjMHBav4Qelo6aubuSueo0JwDLqSN2/fWrdMjcuwvRm8JPo1cKnIwDsbaCu7pk5DnBgFHhtQfjaBFzQ+UUJW09XU27lUbeLiXKNVsE9qxPMF09iktgAD6qCXk4738ry4Jo2i1DwhlOWd8AhEWjpgMqgLg4fu+iJe7QIDAQAB
+    ttl: 300
   google_site_verification:
     enabled: true
     name: ronaldmiranda.com.br
     value: google-site-verification=tVU9R0a9aNy6Cbix_RqNuwgwSdPsdegvD0MYLIjKZkU
+    ttl: 300
   spf:
     enabled: true
     name: ronaldmiranda.com.br
     value: v=spf1 include:_spf.google.com ~all
+    ttl: 300
