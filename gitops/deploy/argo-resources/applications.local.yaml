@@ -32,3 +32,22 @@ applications:
     syncPolicy:
       automated:
         prune: true
+
+  teleport-application:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      targetRevision: main
+      path: gitops/stable/teleport-agent
+      helm:
+        releaseName: teleport-agent
+    destination:
+      name: in-cluster
+      namespace: teleport-system
+    syncPolicy:
+      automated:
+        prune: true
+      syncOptions:
+        - CreateNamespace=true

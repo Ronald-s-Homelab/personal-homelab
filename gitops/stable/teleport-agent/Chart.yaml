@@ -1,0 +1,9 @@
+apiVersion: v2
+name: teleport-agent
+version: v0.0.1
+appVersion: v0.0.1
+
+dependencies:
+  - name: teleport-kube-agent
+    version: "9.0.4"
+    repository: "https://charts.releases.teleport.dev"
