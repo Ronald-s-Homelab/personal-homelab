@@ -17,19 +17,26 @@ spec:
         acme: true
         acmeEmail: r@ronaldmiranda.com.br
         acmeURI: ""
-        chartMode: standalone
+
         clusterName: teleport.ronaldmiranda.com.br
         enterprise: false
+
         image: ronaldmiranda/teleport-arm
         imagePullPolicy: Always
-        labels: {}
-        logLevel: INFO
+        authenticationType: github
         podSecurityPolicy:
-          enabled: true
+          enabled: false
+
+        chartMode: standalone
         standalone:
           existingClaimName: ""
           volumeSize: 10Gi
-        teleportVersionOverride: ""
+
+        certManager:
+          addCommonName: true
+          enabled: true
+          issuerName: teleport-issuer
+
   destination:
     name: teleport-oracle-cluster
     namespace: teleport-system
