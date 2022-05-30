@@ -16,7 +16,3 @@ spec:
               key: api-token
               name: cloudflare-api-token
             email: r@ronaldmiranda.com.br
-        selector:
-          dnsNames:
-            - ronaldmiranda.com.br
-            - '*.ronaldmiranda.com.br'

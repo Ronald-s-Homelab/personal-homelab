@@ -1,7 +1,8 @@
 teleport-cluster:
   image: ronaldmiranda/teleport-arm
   chartMode: custom
-  clusterName: ronaldmiranda.com.br
+  clusterName: teleport.ronaldmiranda.com.br
+  proxyListenerMode: multiplex
   labels:
     app: teleport-cluster
   highAvailability:
