@@ -311,21 +311,21 @@ applications:
       syncOptions:
         - CreateNamespace=true
 
-  teleport-server-app:
-    enabled: true
-    namespace: argocd-system
-    project: default
-    source:
-      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-      targetRevision: main
-      path: gitops/stable/teleport
-      helm:
-        releaseName: teleport-cluster
-    destination:
-      name: teleport-oracle-cluster
-      namespace: teleport-system
-    syncPolicy:
-      automated:
-        prune: true
-      syncOptions:
-        - CreateNamespace=true
+  # teleport-server-app:
+  #   enabled: true
+  #   namespace: argocd-system
+  #   project: default
+  #   source:
+  #     repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+  #     targetRevision: main
+  #     path: gitops/stable/teleport
+  #     helm:
+  #       releaseName: teleport-cluster
+  #   destination:
+  #     name: teleport-oracle-cluster
+  #     namespace: teleport-system
+  #   syncPolicy:
+  #     automated:
+  #       prune: true
+  #     syncOptions:
+  #       - CreateNamespace=true
