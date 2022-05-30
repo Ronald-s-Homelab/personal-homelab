@@ -32,3 +32,37 @@ applications:
     syncPolicy:
       automated:
         prune: true
+
+  cert-manager-certs-oracle:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      targetRevision: main
+      path: gitops/stable/cert-manager-certs
+      helm:
+        releaseName: cert-manager-certs
+        values: |
+          certificate:
+            commonName: "teleport.ronaldmiranda.com.br"
+            secretName: ronaldmiranda-cert
+          issuer:
+            acme:
+              server: https://acme-v02.api.letsencrypt.org/directory
+              cloudflare:
+                email: r@ronaldmiranda.com.br
+                clientSecretSecretRef:
+                  name: cloudflare-api-token
+                  key: api-token
+              solvers:
+                - hostedZoneName: ronaldmiranda.com.br
+                  dnsNames:
+                    - "ronaldmiranda.com.br"
+                    - "teleport.ronaldmiranda.com.br"
+    destination:
+      name: teleport-oracle-cluster
+      namespace: cert-manager
+    syncPolicy:
+      automated:
+        prune: true
