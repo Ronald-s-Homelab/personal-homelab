@@ -1,0 +1,22 @@
+teleport-cluster:
+  image: ronaldmiranda/teleport-arm
+  chartMode: custom
+  clusterName: teleport.liferay.st
+  labels:
+    app: teleport-cluster
+  highAvailability:
+    certManager:
+      enabled: true
+      issuerName: letsencrypt-prod
+      issuerKind: ClusterIssuer
+    replicaCount: 2
+  extraVolumes:
+    - name: teleport-secret
+      secret:
+        secretName: teleport-secret
+  extraVolumeMounts:
+    - name: teleport-secret
+      mountPath: /var/secrets
+  annotations:
+    pod:
+      "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"

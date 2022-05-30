@@ -1,0 +1,35 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+data:
+  teleport.yaml: |
+    teleport:
+      connection_limits:
+        max_connections: 100
+        max_users: 5
+    auth_service:
+      enabled: true
+      listen_addr: 0.0.0.0:3025
+      cluster_name: teleport.ronaldmiranda.com.br
+      authentication:
+        second_factor: "on"
+        type: github
+        webauthn:
+          rp_id: teleport.ronaldmiranda.com.br
+      tokens:
+        - 'kube:/mnt/secrets/joinpasswd'
+    proxy_service:
+      enabled: true
+      kube_listen_addr: 0.0.0.0:3026
+      public_addr: 'teleport.ronaldmiranda.com.br:443'
+      tunnel_public_addr: teleport.ronaldmiranda.com.br:3024
+      https_keypairs:
+        - key_file: /etc/teleport-tls/tls.key
+          cert_file: /etc/teleport-tls/tls.crt
+    kubernetes_service:
+      enabled: false
+    ssh_service:
+      enabled: false

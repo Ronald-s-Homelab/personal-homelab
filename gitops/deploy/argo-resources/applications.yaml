@@ -284,28 +284,11 @@ applications:
     namespace: argocd-system
     project: default
     source:
-      repoURL: https://charts.releases.teleport.dev
-      chart: teleport-cluster
-      targetRevision: 9.0.4
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      targetRevision: main
+      path: gitops/stable/teleport
       helm:
-        releaseName: teleport
-        values: |
-          acme: true
-          acmeEmail: r@ronaldmiranda.com.br
-          acmeURI: ""
-          chartMode: standalone
-          clusterName: teleport.ronaldmiranda.com.br
-          enterprise: false
-          image: ronaldmiranda/teleport-arm
-          imagePullPolicy: Always
-          labels: {}
-          logLevel: INFO
-          podSecurityPolicy:
-            enabled: true
-          standalone:
-            existingClaimName: ""
-            volumeSize: 10Gi
-          teleportVersionOverride: ""
+        releaseName: teleport-cluster
     destination:
       name: teleport-oracle-cluster
       namespace: teleport-system
