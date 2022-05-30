@@ -21,3 +21,8 @@ teleport-cluster:
   annotations:
     pod:
       "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
+  persistence:
+    # Enable persistence using a PersistentVolumeClaim
+    enabled: true
+    existingClaimName: "openebs-hostpath"
+    volumeSize: 10Gi

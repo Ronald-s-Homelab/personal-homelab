@@ -7,13 +7,13 @@ metadata:
 data:
   teleport.yaml: |
     version: v2
-    proxy_listener_mode: multiplex
     teleport:
       connection_limits:
         max_connections: 100
         max_users: 5
     auth_service:
       enabled: yes
+      proxy_listener_mode: multiplex
       cluster_name: teleport.ronaldmiranda.com.br
       authentication:
         second_factor: "on"
@@ -25,11 +25,15 @@ data:
     proxy_service:
       enabled: yes
       public_addr: 'teleport.ronaldmiranda.com.br:443'
-      web_listen_addr: 0.0.0.0:443
+      web_listen_addr: 0.0.0.0:3080
       https_keypairs:
         - key_file: /etc/teleport-tls/tls.key
           cert_file: /etc/teleport-tls/tls.crt
     kubernetes_service:
-      enabled: yes
+      enabled: no
+      public_addr: [teleport.ronaldmiranda.com.br:443]
+      listen_addr: 0.0.0.0:443
     ssh_service:
       enabled: yes
+      listen_addr: 0.0.0.0:3022
+      public_addr: teleport.ronaldmiranda.com.br:443
