@@ -1,7 +1,7 @@
 teleport-cluster:
   image: ronaldmiranda/teleport-arm
   chartMode: custom
-  clusterName: teleport.liferay.st
+  clusterName: teleport.ronaldmiranda.com.br
   labels:
     app: teleport-cluster
   highAvailability:
