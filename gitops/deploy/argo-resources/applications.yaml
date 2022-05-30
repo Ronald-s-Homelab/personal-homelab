@@ -279,6 +279,38 @@ applications:
       syncOptions:
         - CreateNamespace=true
 
+  external-secrets-oracle:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://charts.external-secrets.io
+      chart: external-secrets
+      targetRevision: v0.4.4
+      helm:
+        releaseName: external-secrets
+        values: |
+          replicaCount: 1
+          installCRDs: true
+          leaderElect: true
+          resources:
+            requests:
+              cpu: 100m
+              memory: 320Mi
+            limits:
+              cpu: 100m
+              memory: 320Mi
+          podLabels:
+            app: external-secrets
+    destination:
+      name: teleport-oracle-cluster
+      namespace: external-secrets-system
+    syncPolicy:
+      automated:
+        prune: true
+      syncOptions:
+        - CreateNamespace=true
+
   teleport-server-app:
     enabled: true
     namespace: argocd-system
