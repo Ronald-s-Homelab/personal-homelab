@@ -19,4 +19,4 @@ spec:
         selector:
           dnsNames:
             - ronaldmiranda.com.br
-            - teleport.ronaldmiranda.com.br
+            - '*.ronaldmiranda.com.br'

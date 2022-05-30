@@ -1,7 +1,7 @@
 teleport-cluster:
   image: ronaldmiranda/teleport-arm
   chartMode: custom
-  clusterName: teleport.ronaldmiranda.com.br
+  clusterName: ronaldmiranda.com.br
   labels:
     app: teleport-cluster
   highAvailability:
@@ -16,7 +16,7 @@ teleport-cluster:
         secretName: teleport-secret
   extraVolumeMounts:
     - name: teleport-secret
-      mountPath: /var/secrets
+      mountPath: /mnt/secrets
   annotations:
     pod:
       "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
