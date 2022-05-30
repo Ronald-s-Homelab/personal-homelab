@@ -1,0 +1,22 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: r@ronaldmiranda.com.br
+    preferredChain: ''
+    privateKeySecretRef:
+      name: cert-manager-certs-privkey
+    server: https://acme-v02.api.letsencrypt.org/directory
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              key: api-token
+              name: cloudflare-api-token
+            email: r@ronaldmiranda.com.br
+        selector:
+          dnsNames:
+            - ronaldmiranda.com.br
+            - teleport.ronaldmiranda.com.br
