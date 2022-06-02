@@ -22,8 +22,10 @@ spec:
         chart: {{$value.chart}}
         helm:
           releaseName: {{ $value.helm.releaseName }}
+          {{ with $value.helm.values }}
           values: |
-            {{- $value.helm.values | toString | nindent 12 }}
+            {{- . | toString | nindent 12 }}
+          {{ end }}
       destination:
         name: {{ $value.destination.name }}
         namespace: {{ $value.destination.namespace }}

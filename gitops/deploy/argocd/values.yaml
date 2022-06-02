@@ -1,5 +1,5 @@
 version: 4.5.3
-chartValues:
+chartValues: |
   server:
     extraArgs:
       - --insecure
