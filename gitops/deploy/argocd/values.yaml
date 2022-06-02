@@ -1,6 +1,8 @@
 version: 4.5.3
 chartValues: |
   server:
+    config:
+      url: https://argocd.ronaldmiranda.com.br
     extraArgs:
       - --insecure
     ingress:
