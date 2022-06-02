@@ -3,6 +3,7 @@ chartValues: |
   server:
     config:
       url: https://argocd.ronaldmiranda.com.br
+      application.resourceTrackingMethod: annotation
     extraArgs:
       - --insecure
     ingress:
