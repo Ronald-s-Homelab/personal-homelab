@@ -10,7 +10,6 @@ certificates:
     dnsNames:
       - "*.ronaldmiranda.com.br"
       - "ronaldmiranda.com.br"
-      - "www.ronaldmiranda.com.br"
 
 clusterissuer:
   name: letsencrypt-prod
