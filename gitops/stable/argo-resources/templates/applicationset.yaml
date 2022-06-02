@@ -1,4 +1,33 @@
 {{ with .Values.applicationsets }}
 {{ range $key, $value := . }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $key }}
+  generators:
+    - git:
+        repoURL: {{ $value.localVarRepo }}
+        revision: {{ $value.localVarRevision }}
+        files:
+          - path: {{ $value.localVarFile }}
+  template:
+    metadata:
+      name: "{{ $key }}-svc"
+    spec:
+      project: {{ $value.project }}
+      source:
+        repoURL: {{ $value.repoURL }}
+        targetRevision: {{ $value.targetRevision | squote}}
+        chart: {{$value.chart}}
+      helm:
+        releaseName: {{ $value.helm.releaseName }}
+        values: |
+          {{- $value.helm.values | toString | nindent 12 }}
+      destination:
+        name: {{ $value.destination.name }}
+        namespace: {{ $value.destination.namespace }}
+      {{- if $value.syncPolicy }}
+      syncPolicy: {{- toYaml $value.syncPolicy | nindent 8 }}
+      {{- end }}
 {{ end }}
 {{ end }}

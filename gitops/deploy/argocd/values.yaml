@@ -1,42 +1,44 @@
-server:
-  extraArgs:
-    - --insecure
-  ingress:
-    enabled: true
-    extraPaths: []
-    hosts:
-      - argocd.ronaldmiranda.com.br
-    https: true
-    ingressClassName: nginx
-    pathType: Prefix
-    paths:
-      - /
-    tls:
-      - hosts:
-          - argocd.ronaldmiranda.com.br
-        secretName: ronaldmiranda-cert
+version: 4.5.3
+chartValues:
+  server:
+    extraArgs:
+      - --insecure
+    ingress:
+      enabled: true
+      extraPaths: []
+      hosts:
+        - argocd.ronaldmiranda.com.br
+      https: true
+      ingressClassName: nginx
+      pathType: Prefix
+      paths:
+        - /
+      tls:
+        - hosts:
+            - argocd.ronaldmiranda.com.br
+          secretName: ronaldmiranda-cert
 
-  additionalApplications:
-    - name: argo-applications
-      namespace: argocd-system
-      additionalLabels: {}
-      additionalAnnotations: {}
-      finalizers:
-        - resources-finalizer.argocd.argoproj.io
-      project: default
-      source:
-        repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-        targetRevision: main
-        path: gitops/stable/argo-resources
-        helm:
-          valueFiles:
-            - ../../deploy/argo-resources/applications.local.yaml
-            - ../../deploy/argo-resources/applications.yaml
-            - ../../deploy/argo-resources/projects.yaml
-      destination:
-        name: in-cluster
+    additionalApplications:
+      - name: argo-applications
         namespace: argocd-system
-      syncPolicy:
-        automated:
-          prune: false
-          selfHeal: false
+        additionalLabels: {}
+        additionalAnnotations: {}
+        finalizers:
+          - resources-finalizer.argocd.argoproj.io
+        project: default
+        source:
+          repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+          targetRevision: main
+          path: gitops/stable/argo-resources
+          helm:
+            valueFiles:
+              - ../../deploy/argo-resources/applications.local.yaml
+              - ../../deploy/argo-resources/applications.yaml
+              - ../../deploy/argo-resources/projects.yaml
+        destination:
+          name: in-cluster
+          namespace: argocd-system
+        syncPolicy:
+          automated:
+            prune: false
+            selfHeal: false

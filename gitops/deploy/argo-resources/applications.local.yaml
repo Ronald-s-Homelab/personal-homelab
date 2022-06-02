@@ -1,4 +1,23 @@
 applications:
+  self-argocd:
+    enabled: true
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      targetRevision: main
+      path: gitops/stable/common
+      helm:
+        releaseName: common-resources
+        valueFiles:
+          - ../../deploy/common/values.yaml
+    destination:
+      name: in-cluster
+      namespace: cert-manager
+    syncPolicy:
+      automated:
+        prune: true
+
   common-resources-app:
     enabled: true
     namespace: argocd-system
@@ -36,3 +55,21 @@ applications:
         prune: true
       syncOptions:
         - CreateNamespace=true
+
+applicationsets:
+  self-argocd:
+    localVarRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    localVarRevision: main
+    localVarFile: gitops/deploy/argocd/values.yaml
+
+    project: default
+    repoURL: https://argoproj.github.io/argo-helm
+    targetRevision: "{{version}}"
+    chart: argo-cd
+    helm:
+      releaseName: argo
+      values: |
+        {{chartValues}}
+    destination:
+      name: in-cluster
+      namespace: argocd-system
