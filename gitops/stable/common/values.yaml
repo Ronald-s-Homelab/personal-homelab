@@ -1,0 +1,34 @@
+certificates: {}
+# ronaldmiranda-cert:
+#   annotations:
+#     replicator.v1.mittwald.de/replicate-to-matching: "cert-manager-tls=true"
+#   commonName: ronaldmiranda.com.br
+#   secretName: ronaldmiranda-cert
+#   issuerRef:
+#     name: letsencrypt-prod
+#     kind: ClusterIssuer
+#   dnsNames:
+#     - "*.ronaldmiranda.com.br"
+#     - "ronaldmiranda.com.br"
+#     - "www.ronaldmiranda.com.br"
+
+clusterissuer:
+  {}
+  # name: letsencrypt-prod
+  # acme:
+  #   email: r@ronaldmiranda.com.br
+  #   privateKeySecretRefName: cert-manager-privkey
+  #   server: https://acme-v02.api.letsencrypt.org/directory
+  #   solvers:
+  #     cloudflare:
+  #       apiTokenSecretRef:
+  #         name: cloudflare-api-token
+  #         key: cloudflare_api_token
+
+externalSecrets:
+  {}
+  # cloudflare-token-es:
+  #   targetName: cloudflare-api-token
+  #   data:
+  #     - secretKey: cloudflare_api_token
+  #       remoteRefKey: cloudflare-api-token

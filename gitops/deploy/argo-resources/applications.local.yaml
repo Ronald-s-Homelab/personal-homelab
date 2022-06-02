@@ -10,7 +10,7 @@ applications:
       helm:
         releaseName: common-resources
         valueFiles:
-          - gitops/deploy/common/values.yaml
+          - ../../deploy/common/values.yaml
     destination:
       name: in-cluster
       namespace: cert-manager

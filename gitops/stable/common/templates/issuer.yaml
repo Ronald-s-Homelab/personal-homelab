@@ -1,0 +1,43 @@
+{{ with .Values.clusterissuer }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .name }}
+  {{- with .annotations }}
+  annotations: {{ . | nindent 4 }}
+  {{- end }}
+  {{- with .labels }}
+  labels: {{ . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .acme }}
+  acme:
+    email: {{ .email }}
+    {{- with .preferredChain }}
+    preferredChain: {{ . }}
+    {{- end }}
+    privateKeySecretRef:
+      name: {{ .privateKeySecretRefName }}
+    server: {{ .server }}
+    solvers:
+      {{- with .solvers.cloudflare }}
+      - dns01:
+          cloudflare:
+            {{- with .apiTokenSecretRef }}
+            apiTokenSecretRef:
+              name: {{ .name }}
+              key: {{ .key }}
+            {{- end -}}
+            {{- with .apiKeySecretRef }}
+            apiKeySecretRef:
+              name: {{ .name }}
+              key: {{ .key }}
+            email: {{ .email }}
+            {{- end -}}
+        {{ with .selector }}
+        selector:
+          dnsNames: {{ .dnsNames | toYaml | nindent 12 }}
+        {{ end }}
+      {{ end }}
+  {{ end }}
+{{ end }}

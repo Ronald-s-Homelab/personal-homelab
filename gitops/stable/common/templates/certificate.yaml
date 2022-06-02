@@ -1,0 +1,19 @@
+{{ with .Values.certificates }}
+{{ range $key, $value := . }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $key }}
+spec:
+  commonName: {{ $value.commonName }}
+  renewBefore: {{ $value.renewBefore | default "30h" }}
+  dnsNames: {{ $value.dnsNames | toYaml | nindent 4 }}
+  secretName: {{ $value.secretName }}
+  issuerRef: {{ $value.issuerRef | toYaml | nindent 4 }}
+  secretTemplate:
+    {{- with $value.annotations }}
+    annotations: {{ . | toYaml | nindent 8 }}
+    {{- end }}
+---
+{{ end }}
+{{ end }}
