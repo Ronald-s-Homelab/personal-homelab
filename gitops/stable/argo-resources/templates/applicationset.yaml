@@ -20,10 +20,10 @@ spec:
         repoURL: {{ $value.repoURL }}
         targetRevision: {{ $value.targetRevision | squote}}
         chart: {{$value.chart}}
-      helm:
-        releaseName: {{ $value.helm.releaseName }}
-        values: |
-          {{- $value.helm.values | toString | nindent 12 }}
+        helm:
+          releaseName: {{ $value.helm.releaseName }}
+          values: |
+            {{- $value.helm.values | toString | nindent 12 }}
       destination:
         name: {{ $value.destination.name }}
         namespace: {{ $value.destination.namespace }}
