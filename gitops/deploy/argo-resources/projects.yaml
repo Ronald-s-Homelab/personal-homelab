@@ -1,11 +1,11 @@
 projects:
   home-k8s:
     enabled: true
-    description: A cert-manager project.
+    description: A ArgoCD Project for deploy things on homelab k8s-cluster.
     sourceRepos:
       - "*"
     destinations:
-      - namespace: cert-manager
+      - namespace: "*"
         name: in-cluster
     namespaceResourceWhitelist:
       - group: "*"

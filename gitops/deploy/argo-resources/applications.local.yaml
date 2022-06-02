@@ -1,31 +1,16 @@
 applications:
-  cert-manager-certs:
+  common-resources-app:
     enabled: true
     namespace: argocd-system
     project: default
     source:
       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
       targetRevision: main
-      path: gitops/stable/cert-manager-certs
+      path: gitops/stable/common
       helm:
-        releaseName: cert-manager-certs
-        values: |
-          certificate:
-            commonName: "*.ronaldmiranda.com.br"
-            secretName: ronaldmiranda-cert
-          issuer:
-            acme:
-              server: https://acme-v02.api.letsencrypt.org/directory
-              cloudflare:
-                email: r@ronaldmiranda.com.br
-                clientSecretSecretRef:
-                  name: cloudflare-api-token
-                  key: api-token
-              solvers:
-                - hostedZoneName: ronaldmiranda.com.br
-                  dnsNames:
-                    - "ronaldmiranda.com.br"
-                    - "*.ronaldmiranda.com.br"
+        releaseName: common-resources
+        valueFiles:
+          - gitops/deploy/common/values.yaml
     destination:
       name: in-cluster
       namespace: cert-manager
