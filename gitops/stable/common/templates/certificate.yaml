@@ -6,7 +6,7 @@ metadata:
   name: {{ $key }}
 spec:
   commonName: {{ $value.commonName }}
-  renewBefore: {{ $value.renewBefore | default "30h" }}
+  renewBefore: {{ $value.renewBefore | default "30h0m0s" }}
   dnsNames: {{ $value.dnsNames | toYaml | nindent 4 }}
   secretName: {{ $value.secretName }}
   issuerRef: {{ $value.issuerRef | toYaml | nindent 4 }}
