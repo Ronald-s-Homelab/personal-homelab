@@ -29,12 +29,12 @@ externalSecrets:
   # {}
   cloudflare-token-es:
     targetName: cloudflare-api-token
-    # data:
-    #   - secretKey: cloudflare_api_token
-    #     remoteRefKey: cloudflare-api-token
-    dataFrom:
-      secretNames:
-        - teste
+    data:
+      - secretKey: cloudflare_api_token
+        remoteRefKey: cloudflare-api-token
+    # dataFrom:
+    #   secretNames:
+    #     - teste
 clustersecretstore:
   {}
   # teste:
