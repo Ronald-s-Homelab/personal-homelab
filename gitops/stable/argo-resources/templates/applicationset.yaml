@@ -19,6 +19,7 @@ spec:
       source:
         repoURL: {{ $value.repoURL }}
         targetRevision: {{ $value.targetRevision | squote}}
+        path: {{ $value.path | squote}}
         {{- with $value.chart}}
         chart: {{ . }}
         {{end}}
