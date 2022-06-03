@@ -41,16 +41,25 @@ applicationsets:
   self-argocd:
     localVarRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
     localVarRevision: main
-    localVarFile: gitops/deploy/argocd/values.yaml
+    localVarFile: gitops/deploy/argocd/version
 
-    project: default
-    repoURL: https://argoproj.github.io/argo-helm
-    targetRevision: "{{version}}"
-    chart: argo-cd
-    helm:
-      releaseName: argo
-      values: |
-        {{chartValues}}
+    project: home-k8s
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+    path: gitops/deploy/argocd
+    plugin:
+      name: helm-resolver
+      env:
+        - name: REPO
+          value: "{{chart_repo}}"
+        - name: REPO_NAME
+          value: "{{chart_name}}"
+        - name: CHART_NAME
+          value: "{{chart_name}}"
+        - name: CHART_VERSION
+          value: "{{version}}"
+        - name: VALUE_FILES
+          value: "./values.yaml,./values.rbac.yaml"
     destination:
       name: in-cluster
       namespace: argocd-system

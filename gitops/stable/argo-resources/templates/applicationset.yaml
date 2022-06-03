@@ -19,13 +19,20 @@ spec:
       source:
         repoURL: {{ $value.repoURL }}
         targetRevision: {{ $value.targetRevision | squote}}
-        chart: {{$value.chart}}
+        {{- with $value.chart}}
+        chart: {{ . }}
+        {{end}}
+        {{- with $value.plugin }}
+        plugin: {{- . | toYaml | nindent 10 }}
+        {{ end }}
+        {{- with $value.helm }}
         helm:
-          releaseName: {{ $value.helm.releaseName }}
-          {{ with $value.helm.values }}
+          releaseName: {{ .releaseName }}
+          {{ with .values }}
           values: |
             {{- . | toString | nindent 12 }}
           {{ end }}
+        {{- end }}
       destination:
         name: {{ $value.destination.name }}
         namespace: {{ $value.destination.namespace }}
