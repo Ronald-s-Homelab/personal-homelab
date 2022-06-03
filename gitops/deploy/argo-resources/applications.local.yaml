@@ -59,7 +59,7 @@ applicationsets:
         - name: CHART_VERSION
           value: "{{version}}"
         - name: VALUE_FILES
-          value: "./values.yaml,./values.rbac.yaml"
+          value: "{{value_files}}"
     destination:
       name: in-cluster
       namespace: argocd-system

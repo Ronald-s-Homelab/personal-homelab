@@ -3,3 +3,4 @@ chart_name: argo-cd
 release_name: argocd
 chart_repo: https://argoproj.github.io/argo-helm
 namespace: argocd-system
+value_files: "./values.yaml,./values.rbac.yaml"
