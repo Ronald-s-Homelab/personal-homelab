@@ -35,6 +35,7 @@ externalSecrets:
   #   dataFrom:
   #     secretNames:
   #       - teste
+
 clustersecretstore:
   {}
   # teste:
