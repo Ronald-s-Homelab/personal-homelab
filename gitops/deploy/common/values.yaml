@@ -29,3 +29,9 @@ externalSecrets:
     data:
       - secretKey: cloudflare_api_token
         remoteRefKey: cloudflare-api-token
+
+  minio-secret-es:
+    targetName: local-minio-secret
+    dataFrom:
+      secretNames:
+        - local-minio-secret
