@@ -9,7 +9,7 @@ server:
           args: ['helm repo add "$REPO_NAME" "$REPO"; helm repo update']
         generate:
           command: ["sh", "-c"]
-          args: ['helm template "$ARGOCD_APP_NAME" "$REPO_NAME/$CHART_NAME" -f "$VALUE_FILES" --version "$CHART_VERSION" --namespace "$NAMESPACE"']
+          args: ['helm template "$ARGOCD_APP_NAME" "$REPO_NAME/$CHART_NAME" "$VALUE_FILES" --version "$CHART_VERSION" --namespace "$NAMESPACE"']
   extraArgs:
     - --insecure
   ingress:
