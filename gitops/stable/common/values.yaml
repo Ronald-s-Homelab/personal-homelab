@@ -26,9 +26,22 @@ clusterissuer:
   #         key: cloudflare_api_token
 
 externalSecrets:
+  # {}
+  cloudflare-token-es:
+    targetName: cloudflare-api-token
+    # data:
+    #   - secretKey: cloudflare_api_token
+    #     remoteRefKey: cloudflare-api-token
+    dataFrom:
+      secretNames:
+        - teste
+clustersecretstore:
   {}
-  # cloudflare-token-es:
-  #   targetName: cloudflare-api-token
-  #   data:
-  #     - secretKey: cloudflare_api_token
-  #       remoteRefKey: cloudflare-api-token
+  # teste:
+  #   provider:
+  #     azurekv:
+  #       tenantId: tenant
+  #       vaultUrl: url-vaut
+  #       authSecretRef:
+  #         namespace: namespace
+  #         name: secret
