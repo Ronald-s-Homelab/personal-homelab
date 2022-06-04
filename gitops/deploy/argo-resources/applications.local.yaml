@@ -60,6 +60,8 @@ applicationsets:
           value: "{{version}}"
         - name: VALUE_FILES
           value: "{{value_files}}"
+        - name: NAMESPACE
+          value: &Namespace "argocd-system"
     destination:
       name: in-cluster
-      namespace: argocd-system
+      namespace: *Namespace
