@@ -14,8 +14,9 @@ spec:
   sourceRepos: {{ $value.sourceRepos | toYaml | nindent 4 }}
   destinations: {{ $value.destinations | toYaml | nindent 4 }}
   clusterResourceWhitelist:
-  - group: ''
-    kind: Namespace
+    - group: ''
+      kind: Namespace
+  {{ $value.clusterResourceWhitelist | toYaml | nindent 4 }}
   {{- with $value.namespaceResourceBlacklist }}
   namespaceResourceBlacklist: {{ . | toYaml | nindent 4 }}
   {{ end }}
