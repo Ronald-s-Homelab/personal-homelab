@@ -23,6 +23,14 @@ server:
               )
 
               helm template ${args[*]}
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: server
+
   extraArgs:
     - --insecure
   ingress:
@@ -64,3 +72,34 @@ server:
         automated:
           prune: false
           selfHeal: false
+
+redis-ha:
+  enabled: true
+  persistentVolume:
+    enabled: true
+
+controller:
+  replicas: 2
+  enableStatefulSet: true
+  env:
+    - name: "ARGOCD_CONTROLLER_REPLICAS"
+      value: "2"
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: application-controller
+
+repoServer:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: kubernetes.io/hostname
+      whenUnsatisfiable: ScheduleAnyway
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/component: repo-server
