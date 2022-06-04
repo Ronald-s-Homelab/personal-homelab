@@ -1,32 +1,38 @@
-{{ with .Values.applicationsets }}
+{{ range .Values.clusters }}
+{{ if .enabled }}
+{{ $clusterName := .name }}
+{{ with .applicationSets }}
 {{ range $key, $value := . }}
+{{ range $key, $value := dict $key (merge ( get $.Values.appsetsDefinitions $key) $value) }}
+{{ if .enable }}
+
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: {{ $key }}
+  name: &templateName {{ $key }}-{{$clusterName}}
 spec:
   generators:
     - git:
-        repoURL: {{ $value.localVarRepo }}
-        revision: {{ $value.localVarRevision }}
+        repoURL: {{ .localVarRepo }}
+        revision: {{ .localVarRevision }}
         files:
-          - path: {{ $value.localVarFile }}
+          - path: {{ .localVarFile }}
   template:
     metadata:
-      name: "{{ $key }}-svc"
+      name: *templateName
     spec:
-      project: {{ $value.project }}
+      project: {{ .project }}
       source:
-        repoURL: {{ $value.repoURL }}
-        targetRevision: {{ $value.targetRevision | squote}}
-        path: {{ $value.path | squote}}
-        {{- with $value.chart}}
+        repoURL: {{ .repoURL }}
+        targetRevision: {{ .targetRevision | squote}}
+        path: {{ .path | squote}}
+        {{- with .chart}}
         chart: {{ . }}
         {{end}}
-        {{- with $value.plugin }}
+        {{- with .plugin }}
         plugin: {{- . | toYaml | nindent 10 }}
         {{ end }}
-        {{- with $value.helm }}
+        {{- with .helm }}
         helm:
           releaseName: {{ .releaseName }}
           {{ with .values }}
@@ -35,10 +41,18 @@ spec:
           {{ end }}
         {{- end }}
       destination:
-        name: {{ $value.destination.name }}
-        namespace: {{ $value.destination.namespace }}
-      {{- if $value.syncPolicy }}
-      syncPolicy: {{- toYaml $value.syncPolicy | nindent 8 }}
+        name: {{ $clusterName }}
+        namespace: {{ .destination.namespace }}
+      {{- if .syncPolicy }}
+      syncPolicy: {{- toYaml .syncPolicy | nindent 8 }}
       {{- end }}
-{{ end }}
-{{ end }}
+
+{{end}}
+---
+{{end}}
+{{end}}
+{{end}}
+{{end}}
+{{end}}
+
+

@@ -1,0 +1,6 @@
+clusters:
+  - name: in-cluster
+    enabled: true
+    applicationSets:
+      self-argocd:
+        enable: true

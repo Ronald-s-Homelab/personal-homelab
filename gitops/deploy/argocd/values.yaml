@@ -51,8 +51,8 @@ server:
         path: gitops/stable/argo-resources
         helm:
           valueFiles:
-            - ../../deploy/argo-resources/applications.local.yaml
-            - ../../deploy/argo-resources/applications.yaml
+            - ../../deploy/argo-resources/appdefinitions.yaml
+            - ../../deploy/argo-resources/clusters.yaml
             - ../../deploy/argo-resources/projects.yaml
       destination:
         name: in-cluster

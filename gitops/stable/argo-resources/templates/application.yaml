@@ -1,23 +1,35 @@
-{{ range $key, $value := .Values.applications }}
-{{ if $value.enabled }}
+{{ range .Values.clusters }}
+{{ if .enabled }}
+{{ $clusterName := .name }}
+{{ with .applications }}
+{{ range $key, $value := . }}
+{{ range $key, $value := dict $key (merge ( get $.Values.appDefinitions $key) $value) }}
+{{ if .enable }}
+
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: {{ $key }}
-  namespace: {{ $value.namespace }}
-  {{- with $value.labels }}
+  namespace: {{ .namespace }}
+  {{- with .labels }}
   labels: {{ . | toYaml | nindent 4}}
   {{ end }}
-  {{- with $value.annotations }}
+  {{- with .annotations }}
   annotations: {{ . | toYaml | nindent 4}}
   {{ end }}
 spec:
-  project: {{ $value.project }}
-  source: {{ $value.source | toYaml | nindent 4 }}
-  destination: {{ $value.destination | toYaml | nindent 4 }}
-  {{- with $value.syncPolicy }}
+  project: {{ .project }}
+  source: {{ .source | toYaml | nindent 4 }}
+  destination: {{$clusterName}}
+  {{- with .syncPolicy }}
   syncPolicy: {{ . | toYaml | nindent 4 }}
   {{- end }}
+
+{{end}}
 ---
-{{ end }}
-{{ end }}
+{{end}}
+{{end}}
+{{end}}
+{{end}}
+{{end}}
+

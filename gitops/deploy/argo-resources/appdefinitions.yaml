@@ -1,6 +1,68 @@
-applications:
+appsetsDefinitions:
+  self-argocd:
+    localVarRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    localVarRevision: main
+    localVarFile: gitops/deploy/argocd/version
+
+    project: home-k8s
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+    path: gitops/deploy/argocd
+    plugin:
+      name: helm-resolver
+      env:
+        - name: REPO
+          value: "{{chart_repo}}"
+        - name: REPO_NAME
+          value: "{{chart_name}}"
+        - name: CHART_NAME
+          value: "{{chart_name}}"
+        - name: CHART_VERSION
+          value: "{{version}}"
+        - name: VALUE_FILES
+          value: "{{value_files}}"
+        - name: NAMESPACE
+          value: &Namespace "argocd-system"
+    destination:
+      name: in-cluster
+      namespace: *Namespace
+
+appDefinitions:
+  common-resources-app:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      targetRevision: main
+      path: gitops/stable/common
+      helm:
+        releaseName: common-resources
+        valueFiles:
+          - ../../deploy/common/values.yaml
+    destination:
+      namespace: cert-manager
+    syncPolicy:
+      automated:
+        prune: true
+
+  teleport-application:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+      targetRevision: main
+      path: gitops/stable/teleport-agent
+      helm:
+        releaseName: teleport-agent
+    destination:
+      namespace: teleport-system
+    syncPolicy:
+      automated:
+        prune: true
+      syncOptions:
+        - CreateNamespace=true
+
   cert-manager:
-    enabled: true
     namespace: argocd-system
     project: default
     source:
@@ -37,7 +99,6 @@ applications:
               renewDeadline: 25s
               retryPeriod: 15s
     destination:
-      server: https://kubernetes.default.svc
       namespace: cert-manager
     syncPolicy:
       automated:
@@ -46,7 +107,6 @@ applications:
         - CreateNamespace=true
 
   replicator:
-    enabled: true
     namespace: argocd-system
     project: default
     source:
@@ -67,7 +127,6 @@ applications:
               - apiGroups: [ "batch" ]
                 resources:  ["configmaps", "cronjobs", "deployments", "events", "ingresses", "jobs", "pods", "pods/attach", "pods/exec", "pods/log", "pods/portforward", "services"]
     destination:
-      name: in-cluster
       namespace: replicator-system
     syncPolicy:
       automated:
@@ -76,7 +135,6 @@ applications:
         - CreateNamespace=true
 
   longhorn:
-    enabled: true
     namespace: argocd-system
     project: default
     source:
@@ -113,7 +171,6 @@ applications:
                 more_set_headers "X-Xss-Protection: 1";
                 proxy_set_header X-Forwarded-Method $request_method;
     destination:
-      name: in-cluster
       namespace: longhorn-system
     syncPolicy:
       automated:
@@ -122,7 +179,6 @@ applications:
         - CreateNamespace=true
 
   nginx-ingress:
-    enabled: true
     namespace: argocd-system
     project: default
     source:
@@ -207,7 +263,6 @@ applications:
                 "upstream_status": "$upstream_status"
                 }'
     destination:
-      name: in-cluster
       namespace: nginx-system
     syncPolicy:
       automated:
@@ -217,39 +272,6 @@ applications:
         - CreateNamespace=true
 
   external-secrets:
-    enabled: true
-    namespace: argocd-system
-    project: default
-    source:
-      repoURL: https://charts.external-secrets.io
-      chart: external-secrets
-      targetRevision: v0.4.4
-      helm:
-        releaseName: external-secrets
-        values: |
-          replicaCount: 1
-          installCRDs: false
-          leaderElect: true
-          resources:
-            requests:
-              cpu: 100m
-              memory: 320Mi
-            limits:
-              cpu: 100m
-              memory: 320Mi
-          podLabels:
-            app: external-secrets
-    destination:
-      name: in-cluster
-      namespace: external-secrets-system
-    syncPolicy:
-      automated:
-        prune: true
-      syncOptions:
-        - CreateNamespace=true
-
-  external-secrets-oracle:
-    enabled: true
     namespace: argocd-system
     project: default
     source:
@@ -272,7 +294,6 @@ applications:
           podLabels:
             app: external-secrets
     destination:
-      name: teleport-oracle-cluster
       namespace: external-secrets-system
     syncPolicy:
       automated:
@@ -281,7 +302,6 @@ applications:
         - CreateNamespace=true
 
   teleport-server-app:
-    enabled: true
     namespace: argocd-system
     project: default
     source:
@@ -291,7 +311,6 @@ applications:
       helm:
         releaseName: teleport-cluster
     destination:
-      name: teleport-oracle-cluster
       namespace: teleport-system
     syncPolicy:
       automated:
