@@ -4,3 +4,6 @@ clusters:
     applicationSets:
       self-argocd:
         enable: true
+    applications:
+      common-resources-app:
+        enable: true
