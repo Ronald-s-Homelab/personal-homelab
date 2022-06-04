@@ -7,6 +7,9 @@ projects:
     destinations:
       - namespace: "*"
         name: in-cluster
+    clusterResourceWhitelist:
+      - group: "*"
+        kind: "*"
     namespaceResourceWhitelist:
       - group: "*"
         kind: "*"
