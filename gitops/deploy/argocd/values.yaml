@@ -62,11 +62,6 @@ server:
           prune: false
           selfHeal: false
 
-redis-ha:
-  enabled: true
-  persistentVolume:
-    enabled: true
-
 controller:
   replicas: 2
   enableStatefulSet: true
