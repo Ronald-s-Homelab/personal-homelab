@@ -20,7 +20,9 @@ metadata:
 spec:
   project: {{ .project }}
   source: {{ .source | toYaml | nindent 4 }}
-  destination: {{$clusterName}}
+  destination:
+    name: {{ $clusterName }}
+    namespace: {{ .destination.namespace }}
   {{- with .syncPolicy }}
   syncPolicy: {{ . | toYaml | nindent 4 }}
   {{- end }}

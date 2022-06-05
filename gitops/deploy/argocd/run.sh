@@ -11,7 +11,7 @@ else
 fi
 
 helmChartName='argo-cd'
-helmReleaseName="argocd"
+helmReleaseName="self-argocd-in-cluster"
 helmChartVersion='4.8.0'
 helmChartRepo='https://argoproj.github.io/argo-helm'
 chartNamespace="argocd-system"
@@ -19,7 +19,7 @@ chartNamespace="argocd-system"
 
 command="install"
 
-yq 'del(.server.ingress, .server.additionalApplications)' values.yaml > values.yaml.tmp
+yq 'del(.server.ingress)' values.yaml > values.yaml.tmp
 
 declare -a args=(
   $helmReleaseName
