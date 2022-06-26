@@ -1,0 +1,11 @@
+#!/bin/bash
+
+mkdir -p /config/.acme.sh /config/scripts
+
+curl -o /config/.acme.sh/acme.sh \
+ https://raw.githubusercontent.com/acmesh-official/acme.sh/master/acme.sh
+
+curl -o /config/scripts/renew.acme.sh \
+ https://raw.githubusercontent.com/Ronald-s-Homelab/personal-homelab/main/tools/edgerouter/run.sh
+
+chmod 755 /config/.acme.sh/acme.sh /config/scripts/renew.acme.sh
