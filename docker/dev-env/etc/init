@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ALWAYS_UPDATE="${ALWAYS_UPDATE:-true}"
+
+gcloud auth login --no-launch-browser && gcloud config set project ronaldmiranda
+
+dlogin(){
+  TEMP_DIR=$(mktemp -d)
+  echo "op://cli/dockerhub/token/password" > ${TEMP_DIR}/file.tpl
+  op inject -i ${TEMP_DIR}/file.tpl -o ${TEMP_DIR}/dockerhub_token
+  cat ${TEMP_DIR}/dockerhub_token | docker login -u $1 --password-stdin
+  rm -rf $TEMP_DIR
+  unset TEMP_DIR
+}
+
+if [ ! -d ~/.secrets ]; then
+  mkdir -p ~/.secrets
+  if [ $ALWAYS_UPDATE ]; then
+    echo "recovering secrets from secrets-manager"
+    for sa in $(gcloud secrets list --format="value(name)");
+      do
+        echo "feching $sa secret."
+        if [ "$sa" == "private-gpg" ]; then
+          gcloud secrets versions access latest --secret $sa | base64 -d > ~/.secrets/$sa
+        else
+          gcloud secrets versions access latest --secret $sa > ~/.secrets/$sa
+        fi
+      done
+  fi
+fi
+
+echo "ĺogging in to docker registry"
+cat ~/.secrets/registry-pusher-sa | docker login -u _json_key --password-stdin https://gcr.io
+dlogin ronaldmiranda
+
+
+echo "configure gpg key"
+gpg --import ~/.secrets/private-gpg
+
+
+if [ "$(git config --get commit.gpgsign)" == "" ]; then
+  echo "configure commit signature key"
+  git config --global user.signingkey E0F9E32203A26F69
+  git config --global commit.gpgsign true
+  git config --global user.name ronaldmiranda
+  git config --global user.email r@ronaldmiranda.com.br
+fi

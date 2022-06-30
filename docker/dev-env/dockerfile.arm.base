@@ -1,0 +1,173 @@
+FROM debian:10-slim
+
+# APT INSTALL
+
+ENV TZ='America/Recife'
+
+RUN apt-get update && apt-get install sudo -y
+
+RUN sudo apt-get update && DEBIAN_FRONTEND="noninteractive" sudo apt-get -y install tzdata
+RUN sudo apt-get update \
+  && DEBIAN_FRONTEND="noninteractive" sudo apt-get install -y --no-install-recommends \
+    apt-transport-https \
+    bash-completion \
+    build-essential \
+    ca-certificates \
+    curl \
+    git \
+    gnupg \
+    htop \
+    iproute2 \
+    iputils-ping \
+    less \
+    libffi-dev \
+    libhdf5-dev \
+    libssl-dev \
+    lsb-release \
+    openssl \
+    python3-cryptography \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    python3-wheel \
+    ssh \
+    sshfs \
+    tmux \
+    tree \
+    unzip \
+    vim \
+    zsh \
+    fzf \
+  && sudo rm -rf /var/lib/apt/lists/*
+
+# Docker Client.
+
+RUN DOCKER_VERSION="20.10.6" \
+  && curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" \
+  | tar --strip-components=1 -xz -C /usr/local/bin docker/docker \
+  && docker -v \
+  && unset DOCKER_VERSION
+
+# Terraform.
+
+RUN TERRAFORM_VERSION="1.1.9" \
+  && curl -o terraform_linux_arm64.zip -fsSL \
+  "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip" \
+  && unzip terraform_linux_arm64.zip -d /usr/local/bin \
+  && terraform -v \
+  && rm -f terraform_linux_arm64.zip \
+  && unset TERRAFORM_VERSION
+
+# Terragrunt.
+
+RUN TERRAGRUNT_VERSION="0.37.1" \
+  && curl -o /usr/local/bin/terragrunt -fsSL \
+  "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_arm64" \
+  && chmod +x /usr/local/bin/terragrunt \
+  && terragrunt -v \
+  && unset TERRAGRUNT_VERSION
+
+# Kubectl.
+
+RUN KUBECTL_VERSION="1.20.0" \
+  && curl -o /usr/local/bin/kubectl -fsSL \
+  "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/arm64/kubectl" \
+  && chmod +x /usr/local/bin/kubectl \
+  && kubectl completion bash > /etc/profile.d/kubectl.bash.inc \
+  && kubectl completion zsh > /etc/profile.d/kubectl.zsh.inc \
+  && kubectl -h \
+  && unset KUBECTL_VERSION
+
+# Kubectx.
+
+RUN KUBECTX_VERSION="0.9.4" \
+  && curl -o kubectx_linux_arm64.tar.gz -fsSL \
+  "https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_arm64.tar.gz" \
+  && tar -xzvf kubectx_linux_arm64.tar.gz -C /usr/local/bin \
+  && kubectx -h \
+  && rm -f kubectx_linux_arm64.tar.gz \
+  && unset KUBECTX_VERSION
+
+# Kubens.
+
+RUN KUBENS_VERSION="0.9.4" \
+  && curl -o kubens_linux_arm64.tar.gz -fsSL \
+  "https://github.com/ahmetb/kubectx/releases/download/v${KUBENS_VERSION}/kubens_v${KUBENS_VERSION}_linux_arm64.tar.gz" \
+  && tar -xzvf kubens_linux_arm64.tar.gz -C /usr/local/bin \
+  && kubens -h \
+  && rm -f kubens_linux_arm64.tar.gz \
+  && unset KUBENS_VERSION
+
+# ZSH
+
+ENV ZSH='/etc/rc/.oh-my-zsh'
+ENV ZSH_CUSTOM=$ZSH/custom
+
+RUN bash -c \
+  "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/oh-my-zsh/master/tools/install.sh)" --unattended \
+  && zsh -c 'autoload -U compinit && compinit'
+
+# Install powelevel10k theme
+
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
+
+# Install default plugins
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
+
+# Teleport
+
+RUN TELEPORT_VERSION="8.0.7" \
+  && curl -O https://get.gravitational.com/teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz \
+  && tar -xzf teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz \
+  && cd teleport && sudo ./install \
+  cd .. && rm -rf teleport teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz
+
+# k9s
+
+RUN K9S_VERSION="0.25.18" \
+  curl -o k9s.tar.gz -fsSL \
+    https://github.com/derailed/k9s/releases/download/v0.25.18/k9s_Linux_arm64.tar.gz \
+  && tar -zxvf k9s.tar.gz -C /bin \
+  && k9s -h \
+  && rm -rf k9s.tar.gz \
+  && unset K9S_VERSION
+
+# Helm
+
+RUN HELM_VERSION="3.8.1" \
+  && curl -o helm-arm64.tar.gz -fsSL \
+  "https://get.helm.sh/helm-v${HELM_VERSION}-linux-arm64.tar.gz" \
+  && tar -zxvf helm-arm64.tar.gz \
+  && mv linux-arm64/helm /usr/local/bin/helm \
+  && rm -rf helm-arm64.tar.gz linux-arm64 \
+  && helm version \
+  && unset HELM_VERSION
+
+# Azure CLI.
+RUN python3 -m pip install azure.cli
+
+# Gcloud.
+
+RUN GCLOUD_VERSION="378.0.0" \
+  && curl -o google-cloud-sdk.tar.gz -fsSL \
+  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-arm.tar.gz" \
+  && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
+  && /bin/google-cloud-sdk/install.sh -q \
+  && rm -f google-cloud-sdk.tar.gz \
+  && unset GCLOUD_VERSION
+
+# Argo CLI
+
+RUN ARGO_VERSION='2.3.3' \
+  && curl -o /usr/local/bin/argocd -fsSL https://github.com/argoproj/argo-cd/releases/download/v${ARGO_VERSION}/argocd-linux-arm64 \
+  && chmod +x /usr/local/bin/argocd \
+  && argocd version --client
+
+# 1Password CLI
+
+RUN OP_VERSION='2.0.0' \
+  && curl -fsSLO \
+    "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_arm64_v${OP_VERSION}.zip" \
+  && unzip op_linux_arm64_v${OP_VERSION}.zip && mv op /usr/bin \
+  && rm op_linux_arm64_v${OP_VERSION}.zip

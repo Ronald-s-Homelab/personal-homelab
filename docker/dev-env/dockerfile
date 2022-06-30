@@ -1,0 +1,38 @@
+ARG image
+
+FROM $image
+
+ARG user
+ARG uid
+ARG gid
+ARG groupcmd
+ARG arch='amd64'
+
+RUN apt-get update && apt-get install sudo -y
+
+RUN eval $groupcmd
+
+RUN echo "${user}    ALL=NOPASSWD: ALL" > /etc/sudoers
+RUN chown $uid:$gid /usr/local/bin /etc/profile.d/ /home/$user
+USER $user
+
+# Developer environment.
+
+COPY etc/bashrc /etc/rc/bashrc
+COPY etc/zshrc /etc/rc/zshrc
+COPY etc/p10k /etc/rc/p10k
+COPY etc/init /etc/init
+COPY ssh/config_${arch} /etc/rc/.ssh/config
+
+RUN rm -f /home/$user/.bashrc /home/$user/.zshrc /home/$user/.p10k.zsh \
+  && ln -s /etc/rc/bashrc /home/$user/.bashrc \
+  && ln -s /etc/rc/zshrc /home/$user/.zshrc \
+  && ln -s /etc/rc/p10k /home/$user/.p10k.zsh \
+  && ln -s /dojo/identity/repo /home/$user/repo \
+  && mkdir -p /home/$user/.ssh && ln -s /etc/rc/.ssh/config /home/$user/.ssh/config
+
+# After the following line, changes to /root take no effect.
+WORKDIR /home/$user
+VOLUME /home/$user
+
+CMD ["/bin/zsh"]

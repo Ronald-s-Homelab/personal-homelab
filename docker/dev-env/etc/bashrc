@@ -1,0 +1,45 @@
+# !!ATTENTION!!!
+# DO NOT EDIT: use ~/bashrc_local
+
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# Make bash autocomplete with up arrow.
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+bind '"\e[1;5C": forward-word'
+bind '"\e[1;5D": backward-word'
+
+export EDITOR='vim'
+
+export LS_OPTIONS='--color=auto'
+alias ls='ls $LS_OPTIONS'
+alias ll='ls $LS_OPTIONS -l'
+alias l='ls $LS_OPTIONS -lhA'
+
+alias ..='cd ..'
+alias blaze='bazel'
+alias wip='git commit -a -m wip'
+alias k='kubectl'
+alias tf='terraform'
+
+# Local hook.
+[ -f ~/bashrc_local ] && . ~/bashrc_local

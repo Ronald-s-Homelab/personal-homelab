@@ -1,0 +1,87 @@
+ZSH_CONFIGURE="${ZSH_CONFIGURE:-"n"}"
+
+export KUBECONFIG=~/.kube/config
+export ZSH_DISABLE_COMPFIX=true
+
+# terraform provider config
+export CLOUDFLARE_EMAIL='op://cli/cloudflare/CLOUDFLARE_EMAIL'
+export CLOUDFLARE_API_KEY='op://cli/cloudflare/CLOUDFLARE_API_KEY'
+# terraform envvars
+
+export TF_VAR_CLOUDFLARE_EMAIL='op://cli/cloudflare/CLOUDFLARE_EMAIL'
+export TF_VAR_CLOUDFLARE_API_KEY='op://cli/cloudflare/CLOUDFLARE_API_KEY'
+export TF_VAR_CLOUDFLARE_API_TOKEN='op://cli/cloudflare/CLOUDFLARE_API_TOKEN'
+
+export TF_VAR_TP_AUTH_TOKEN='op://cli/teleport-terraform-token/password'
+
+export TF_VAR_AZ_CLIENT_ID='op://cli/terraform-azure-sp/AZ_CLIENT_ID'
+export TF_VAR_AZ_CLIENT_SECRET='op://cli/terraform-azure-sp/AZ_CLIENT_SECRET'
+export TF_VAR_AZ_TENANT_ID='op://cli/terraform-azure-sp/AZ_TENANT_ID'
+
+export TF_VAR_MINIO_USER='op://cli/minio-local/user'
+export TF_VAR_MINIO_KEY='op://cli/minio-local/secret'
+
+export TF_VAR_VAULT_TOKEN='op://private/home-hashicorp-vault/ROOT'
+
+function zsh_configured() {
+  while true; do
+    echo -n "Do you wish to use the ZSH from your machine? [y/n]: "
+    read zshyn
+    case $zshyn in
+      [yY]* )
+        export ZSH=/home/$USR/.oh-my-zsh
+        export ZSH_CUSTOM=$ZSH/custom
+        ;;
+      [nN]* );;
+      * )
+        echo "Please answer [yY] or [nN].";;
+    esac
+    echo -n "Do you wish to use your kubeconfig file from your local machine? [y/n]: "
+    read kubeyn
+    case $kubeyn in
+      [yY]* )
+        export KUBECONFIG=/home/$USR/.kube/config
+        ;;
+      [nN]* );;
+      * )
+        echo "Please answer [yY] or [nN].";;
+    esac
+    break
+  done
+  touch .zsh_configured
+}
+
+if [[ $ZSH_CONFIGURE =~ ^([yY])+$ ]] || [[ ! -f ~/.zsh_configured ]]; then
+  rm -f ~/.zsh_configured 2> /dev/null
+  zsh_configured
+fi
+
+ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(
+  docker
+  dotenv
+  git
+  kubectl
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
+
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+source /bin/google-cloud-sdk/completion.zsh.inc
+source /bin/google-cloud-sdk/path.zsh.inc
+source /etc/profile.d/k3d
+source /etc/profile.d/kubectl.zsh.inc
+source $ZSH/oh-my-zsh.sh
+
+alias init='/etc/init'
+alias tf='op run -- terraform'
+alias tg='op run -- terragrunt'
+
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Local customized path and environment settings, etc.
+
+[[ ! -f ~/.zshrc_local ]] || . ~/.zshrc_local

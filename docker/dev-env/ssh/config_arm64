@@ -1,0 +1,2 @@
+Host *
+  IdentityAgent /mnt/sock/agent.sock
