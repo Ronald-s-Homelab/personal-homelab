@@ -19,10 +19,10 @@ extraManifests:
       name: self-atlantis-in-cluster
     spec:
       ingressClassName: nginx
-      # tls:
-      #   - hosts:
-      #       - atlantis.ronaldmiranda.com.br
-      #     secretName: ronaldmiranda-cert
+      tls:
+        - hosts:
+            - atlantis.ronaldmiranda.com.br
+          secretName: ronaldmiranda-cert
       rules:
         - host: atlantis.ronaldmiranda.com.br
           http:
