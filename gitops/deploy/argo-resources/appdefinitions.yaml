@@ -26,6 +26,33 @@ appsetsDefinitions:
     destination:
       name: in-cluster
       namespace: *Namespace
+  self-atlantis:
+    localVarRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    localVarRevision: main
+    localVarFile: gitops/deploy/atlantis/version
+
+    project: home-k8s
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+    path: gitops/deploy/atlantis
+    plugin:
+      name: helm-resolver
+      env:
+        - name: REPO
+          value: "{{chart_repo}}"
+        - name: REPO_NAME
+          value: "{{chart_name}}"
+        - name: CHART_NAME
+          value: "{{chart_name}}"
+        - name: CHART_VERSION
+          value: "{{version}}"
+        - name: VALUE_FILES
+          value: "{{value_files}}"
+        - name: NAMESPACE
+          value: &Namespace "{{namespace}}"
+    destination:
+      name: in-cluster
+      namespace: *Namespace
 
 appDefinitions:
   common-resources-app:

@@ -1,0 +1,46 @@
+extraManifests:
+  - apiVersion: external-secrets.io/v1alpha1
+    kind: ExternalSecret
+    metadata:
+      name: github-app-es
+    spec:
+      dataFrom:
+        - key: github-app-secret
+      refreshInterval: 1h
+      secretStoreRef:
+        kind: ClusterSecretStore
+        name: azure-css
+      target:
+        creationPolicy: Owner
+        name: github-app-secret
+  - apiVersion: external-secrets.io/v1alpha1
+    kind: ExternalSecret
+    metadata:
+      name: github-app-pem-es
+    spec:
+      data:
+        - remoteRef:
+            key: github-app-pem
+          secretKey: app.pem
+      refreshInterval: 1h
+      secretStoreRef:
+        kind: ClusterSecretStore
+        name: azure-css
+      target:
+        creationPolicy: Owner
+        name: github-app-pem
+
+atlantisUrl: atlantis.ronaldmiranda.com.br
+
+githubApp:
+  id: 221530
+  key: /mnt/secrets/app.pem
+
+extraVolumes:
+  - name: pem-volume
+    secrets:
+      secretName: github-app-pem
+
+extraVolumeMounts:
+  - name: pem-volume
+    mountPath: /mnt/secrets
