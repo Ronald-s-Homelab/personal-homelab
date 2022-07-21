@@ -35,7 +35,7 @@ extraManifests:
                     port:
                       number: 80
 
-atlantisUrl: atlantis.ronaldmiranda.com.br
+atlantisUrl: http://atlantis.ronaldmiranda.com.br
 
 vcsSecretName: *github-secret
 
