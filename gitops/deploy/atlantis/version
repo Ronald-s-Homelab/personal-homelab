@@ -1,5 +1,6 @@
 version: 4.0.6
-chart_name: runatlantis
+repo_name: runatlantis
+chart_name: atlantis
 release_name: atlantis
 chart_repo: https://runatlantis.github.io/helm-charts
 namespace: atlantis-system

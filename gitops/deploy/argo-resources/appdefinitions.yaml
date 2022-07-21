@@ -41,7 +41,7 @@ appsetsDefinitions:
         - name: REPO
           value: "{{chart_repo}}"
         - name: REPO_NAME
-          value: "{{chart_name}}"
+          value: "{{repo_name}}"
         - name: CHART_NAME
           value: "{{chart_name}}"
         - name: CHART_VERSION
