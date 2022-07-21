@@ -4,10 +4,8 @@ extraManifests:
     metadata:
       name: github-app-pem-es
     spec:
-      data:
-        - remoteRef:
-            key: github-app-pem
-          secretKey: key.pem
+      dataFrom:
+        - key: github-app-pem
       refreshInterval: 1h
       secretStoreRef:
         kind: ClusterSecretStore
