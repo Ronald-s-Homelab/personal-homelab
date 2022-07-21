@@ -1,4 +1,4 @@
-version: 4.9.8
+version: 4.9.16
 chart_name: argo-cd
 release_name: argocd
 chart_repo: https://argoproj.github.io/argo-helm
