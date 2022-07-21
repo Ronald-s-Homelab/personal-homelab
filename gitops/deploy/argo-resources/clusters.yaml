@@ -4,6 +4,8 @@ clusters:
     applicationSets:
       self-argocd:
         enable: true
+      self-atlantis:
+        enable: true
     applications:
       common-resources-app:
         enable: true
