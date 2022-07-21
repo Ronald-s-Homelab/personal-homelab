@@ -49,7 +49,7 @@ appsetsDefinitions:
         - name: VALUE_FILES
           value: "{{value_files}}"
         - name: NAMESPACE
-          value: &Namespace "{{namespace}}"
+          value: &Namespace "atlantis-system"
     destination:
       name: in-cluster
       namespace: *Namespace
