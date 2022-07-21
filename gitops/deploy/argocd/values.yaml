@@ -6,7 +6,7 @@ server:
       - name: helm-resolver
         init:
           command: ["sh", "-c"]
-          args: ['helm repo add "$REPO_NAME" "$REPO"; helm repo update']
+          args: ['helm repo add "$ARGOCD_ENV_REPO_NAME" "$ARGOCD_ENV_REPO"; helm repo update']
         generate:
           command:
             - "sh"
