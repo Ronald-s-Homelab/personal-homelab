@@ -20,11 +20,10 @@ atlantisUrl: atlantis.ronaldmiranda.com.br
 
 vcsSecretName: github-app-pem
 
-extraVolumes:
-  - name: pem-volume
-    secrets:
-      secretName: github-app-pem
-
-extraVolumeMounts:
-  - name: pem-volume
-    mountPath: /mnt/secrets
+ingress:
+  enabled: true
+  hosts:
+    - host: atlantis.ronaldmiranda.com.br
+      paths: ["/"]
+  tls: []
+  labels: {}
