@@ -53,7 +53,9 @@ appsetsDefinitions:
     destination:
       name: in-cluster
       namespace: *Namespace
-
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
 appDefinitions:
   common-resources-app:
     namespace: argocd-system
