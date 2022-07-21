@@ -12,7 +12,7 @@ extraManifests:
         name: azure-css
       target:
         creationPolicy: Owner
-        name: github-app-pem
+        name: &github-secret github-app-pem
   - apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
@@ -37,7 +37,19 @@ extraManifests:
 
 atlantisUrl: atlantis.ronaldmiranda.com.br
 
-vcsSecretName: github-app-pem
+vcsSecretName: *github-secret
+
+githubApp:
+  foo: bar
+
+environmentSecrets:
+  - name: ATLANTIS_GH_APP_ID
+    secretKeyRef:
+      name: *github-secret
+      key: github_appid
+
+test:
+  enabled: false
 
 ingress:
   enabled: false
