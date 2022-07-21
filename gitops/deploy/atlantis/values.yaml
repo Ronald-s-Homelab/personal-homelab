@@ -43,3 +43,6 @@ vcsSecretName: github-app-pem
 
 ingress:
   enabled: false
+
+service:
+  type: ClusterIP
