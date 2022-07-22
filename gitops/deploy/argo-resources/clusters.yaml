@@ -9,3 +9,8 @@ clusters:
     applications:
       common-resources-app:
         enable: true
+  - name: oracle
+    enabled: true
+    applications:
+      teleport-server-app:
+        enable: true
