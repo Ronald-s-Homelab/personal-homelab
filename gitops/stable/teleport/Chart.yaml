@@ -1,7 +1,7 @@
 apiVersion: v2
 name: teleport
-version: v0.0.1
-appVersion: v0.0.1
+version: 9.3.0
+appVersion: 9.3.0
 
 dependencies:
   - name: teleport-cluster
