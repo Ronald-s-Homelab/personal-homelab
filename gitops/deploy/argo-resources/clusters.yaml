@@ -4,13 +4,14 @@ clusters:
     applicationSets:
       self-argocd:
         enable: true
-      self-atlantis:
-        enable: true
     applications:
       common-resources-app:
         enable: true
   - name: oracle
     enabled: true
+    applicationSets:
+      self-atlantis:
+        enable: true
     applications:
       teleport-server-app:
         enable: true

@@ -51,7 +51,7 @@ appsetsDefinitions:
         - name: NAMESPACE
           value: &Namespace "atlantis-system"
     destination:
-      name: in-cluster
+      name: oracle
       namespace: *Namespace
     syncPolicy:
       syncOptions:
