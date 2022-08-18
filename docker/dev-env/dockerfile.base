@@ -110,7 +110,7 @@ RUN K9S_VERSION="0.25.18" \
 
 # GCloud.
 
-RUN GCLOUD_VERSION="378.0.0" \
+RUN GCLOUD_VERSION="394.0.0" \
   && curl -o google-cloud-sdk.tar.gz -fsSL \
   "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
   && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
