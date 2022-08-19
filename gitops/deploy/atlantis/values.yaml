@@ -16,7 +16,7 @@ extraManifests:
   - apiVersion: networking.k8s.io/v1
     kind: Ingress
     metadata:
-      name: self-atlantis-in-cluster
+      name: atlantis-ingress
     spec:
       ingressClassName: nginx
       tls:
@@ -31,7 +31,7 @@ extraManifests:
                 pathType: Prefix
                 backend:
                   service:
-                    name: self-atlantis-in-cluster
+                    name: self-atlantis-oracle
                     port:
                       number: 80
 
