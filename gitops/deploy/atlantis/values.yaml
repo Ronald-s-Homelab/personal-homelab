@@ -17,8 +17,7 @@ extraManifests:
           engineVersion: v2
           data:
             github_appid: "{{`{{ .github_appid }}`}}"
-            github_secret: "{{`{{ .github_secret }}`}}"
-            gh_webhook_secret: "{{`{{ .gh_webhook_secret }}`}}"
+            github_secret: "{{`{{ .gh_webhook_secret }}`}}"
             key.pem: "{{`{{ .github_private_key_base64 | b64dec }}`}}"
 
 atlantisUrl: http://atlantis.ronaldmiranda.com.br
@@ -39,10 +38,6 @@ environmentSecrets:
     secretKeyRef:
       name: *atlantis-config-secret
       key: key.pem
-  - name: ATLANTIS_GH_WEBHOOK_SECRET
-    secretKeyRef:
-      name: *atlantis-config-secret
-      key: gh_webhook_secret
 
 test:
   enabled: false
