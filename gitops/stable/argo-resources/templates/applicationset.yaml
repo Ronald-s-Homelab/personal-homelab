@@ -11,12 +11,14 @@ kind: ApplicationSet
 metadata:
   name: &templateName {{ $key }}-{{$clusterName}}
 spec:
+  {{- if eq ( .generators | default "true" ) "true" }}
   generators:
     - git:
         repoURL: {{ .localVarRepo }}
         revision: {{ .localVarRevision }}
         files:
           - path: {{ .localVarFile }}
+  {{- end }}
   template:
     metadata:
       name: *templateName
