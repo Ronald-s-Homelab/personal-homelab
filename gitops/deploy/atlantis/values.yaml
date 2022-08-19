@@ -22,7 +22,7 @@ extraManifests:
       tls:
         - hosts:
             - atlantis.ronaldmiranda.com.br
-          secretName: ronaldmiranda-cert
+          secretName: ronaldmiranda-tls
       rules:
         - host: atlantis.ronaldmiranda.com.br
           http:
