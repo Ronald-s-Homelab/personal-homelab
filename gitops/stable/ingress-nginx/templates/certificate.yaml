@@ -11,3 +11,6 @@ spec:
     kind: ClusterIssuer
     name: letsencrypt-prod
   secretName: ronaldmiranda-tls
+  secretTemplate:
+    annotations:
+      replicator.v1.mittwald.de/replicate-to-matching: cert-manager-tls=true
