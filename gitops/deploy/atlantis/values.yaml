@@ -62,6 +62,16 @@ service:
 repoConfig: |
   repos:
   - id: /.*/
-    workflow: default
+    apply_requirements: [mergeable]
+    delete_source_branch_on_merge: true
     pre_workflow_hooks:
-    - run: terragrunt-atlantis-config generate --output atlantis.yaml --autoplan --parallel --create-workspace
+      - run: terragrunt-atlantis-config generate --output atlantis.yaml --autoplan --parallel
+    workflow: terragrunt
+  workflows:
+    terragrunt:
+      plan:
+        steps:
+          - run: terragrunt plan -no-color -out $PLANFILE
+      apply:
+        steps:
+        - run: terragrunt apply -no-color $PLANFILE
