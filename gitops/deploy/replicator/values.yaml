@@ -1,5 +1,5 @@
 image:
-  repository: quay.io/mittwald/kubernetes-replicator
+  repository: quay.io/mittwald/kubernetes-replicator-arm64
   tag: v2.7.3
   pullPolicy: Always
 args:
