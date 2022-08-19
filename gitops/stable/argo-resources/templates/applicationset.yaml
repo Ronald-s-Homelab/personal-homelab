@@ -18,6 +18,11 @@ spec:
         revision: {{ .localVarRevision }}
         files:
           - path: {{ .localVarFile }}
+  {{- else }}
+  generators:
+    - list:
+        elements:
+         - cluster: {{$clusterName}}
   {{- end }}
   template:
     metadata:
