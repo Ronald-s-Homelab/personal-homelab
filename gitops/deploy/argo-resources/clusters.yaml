@@ -14,6 +14,8 @@ clusters:
     applicationSets:
       self-atlantis:
         enable: true
+      nginx-ingress:
+        enable: true
     applications:
       teleport-server-app:
         enable: true

@@ -1,0 +1,4 @@
+version: 4.2.1
+chart_name: ingress-nginx
+release_name: ingress-nginx
+chart_repo: https://argoproj.github.io/argo-helm

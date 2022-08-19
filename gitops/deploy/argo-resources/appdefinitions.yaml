@@ -56,6 +56,36 @@ appsetsDefinitions:
     syncPolicy:
       syncOptions:
         - CreateNamespace=true
+  nginx-ingress:
+    localVarRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    localVarRevision: main
+    localVarFile: gitops/deploy/nginx/version
+
+    project: home-k8s
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+    path: gitops/deploy/nginx
+    plugin:
+      name: helm-resolver
+      env:
+        - name: REPO
+          value: "{{chart_repo}}"
+        - name: REPO_NAME
+          value: "{{repo_name}}"
+        - name: CHART_NAME
+          value: "{{chart_name}}"
+        - name: CHART_VERSION
+          value: "{{version}}"
+        - name: VALUE_FILES
+          value: "-f values-oracle.yaml"
+        - name: NAMESPACE
+          value: &Namespace "nginx-system"
+    destination:
+      name: oracle
+      namespace: *Namespace
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
 appDefinitions:
   common-resources-app:
     namespace: argocd-system
