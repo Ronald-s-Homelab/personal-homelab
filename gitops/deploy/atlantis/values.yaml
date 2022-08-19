@@ -38,9 +38,9 @@ environmentSecrets:
 test:
   enabled: false
 
-# image:
-#   repository: flaconi/atlantis-terragrunt
-#   tag: 0.19.7-1.2.6-0.38.6-0.10.1
+image:
+  repository: ronaldmiranda/atlantis
+  tag: latest
 
 ingress:
   enabled: true
