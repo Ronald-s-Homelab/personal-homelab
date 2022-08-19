@@ -16,6 +16,8 @@ clusters:
         enable: true
       nginx-ingress:
         enable: true
+      replicator:
+        enable: true
     applications:
       teleport-server-app:
         enable: true

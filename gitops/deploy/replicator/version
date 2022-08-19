@@ -1,0 +1,4 @@
+version: 2.7.3
+chart_name: kubernetes-replicator
+release_name: kubernetes-replicator
+chart_repo: https://helm.mittwald.de

@@ -56,6 +56,35 @@ appsetsDefinitions:
     syncPolicy:
       syncOptions:
         - CreateNamespace=true
+  replicator:
+    localVarRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    localVarRevision: main
+    localVarFile: gitops/deploy/replicator/version
+
+    project: home-k8s
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+    path: gitops/deploy/replicator
+    plugin:
+      name: helm-resolver
+      env:
+        - name: REPO
+          value: "{{chart_repo}}"
+        - name: REPO_NAME
+          value: "{{repo_name}}"
+        - name: CHART_NAME
+          value: "{{chart_name}}"
+        - name: CHART_VERSION
+          value: "{{version}}"
+        - name: VALUE_FILES
+          value: "{{value_files}}"
+        - name: NAMESPACE
+          value: &Namespace "kube-system"
+    destination:
+      namespace: *Namespace
+    syncPolicy:
+      syncOptions:
+        - CreateNamespace=true
   nginx-ingress:
     generators: "false"
     project: home-k8s

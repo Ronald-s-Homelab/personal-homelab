@@ -1,0 +1,45 @@
+image:
+  repository: quay.io/mittwald/kubernetes-replicator
+  tag: v2.7.3
+  pullPolicy: Always
+args:
+  - -log-format=json
+grantClusterAdmin: false
+serviceAccount:
+  create: true
+  privileges:
+    - apiGroups: ["", "apps", "extensions"]
+      resources:
+        [
+          "secrets",
+          "configmaps",
+          "roles",
+          "rolebindings",
+          "cronjobs",
+          "deployments",
+          "events",
+          "ingresses",
+          "jobs",
+          "pods",
+          "pods/attach",
+          "pods/exec",
+          "pods/log",
+          "pods/portforward",
+          "services",
+        ]
+    - apiGroups: ["batch"]
+      resources:
+        [
+          "configmaps",
+          "cronjobs",
+          "deployments",
+          "events",
+          "ingresses",
+          "jobs",
+          "pods",
+          "pods/attach",
+          "pods/exec",
+          "pods/log",
+          "pods/portforward",
+          "services",
+        ]
