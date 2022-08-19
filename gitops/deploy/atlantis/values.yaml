@@ -58,3 +58,10 @@ ingress:
 
 service:
   type: ClusterIP
+
+repoConfig: |
+  repos:
+  - id: /.*/
+    workflow: default
+    pre_workflow_hooks:
+    - run: terragrunt-atlantis-config generate --output atlantis.yaml --autoplan --parallel --create-workspace
