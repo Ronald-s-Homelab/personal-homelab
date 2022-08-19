@@ -77,7 +77,7 @@ appsetsDefinitions:
         - name: CHART_VERSION
           value: "{{version}}"
         - name: VALUE_FILES
-          value: "{{value_files}}"
+          value: "-f values.yaml"
         - name: NAMESPACE
           value: &Namespace "kube-system"
     destination:
