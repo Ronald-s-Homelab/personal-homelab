@@ -5,39 +5,26 @@ extraManifests:
       name: github-app-pem-es
     spec:
       dataFrom:
-        - key: github-app-pem
+        - key: atlantis-config-json
       refreshInterval: 1h
       secretStoreRef:
         kind: ClusterSecretStore
         name: azure-css
       target:
         creationPolicy: Owner
-        name: &github-secret github-app-pem
-  - apiVersion: networking.k8s.io/v1
-    kind: Ingress
-    metadata:
-      name: atlantis-ingress
-    spec:
-      ingressClassName: nginx
-      tls:
-        - hosts:
-            - atlantis.ronaldmiranda.com.br
-          secretName: ronaldmiranda-tls
-      rules:
-        - host: atlantis.ronaldmiranda.com.br
-          http:
-            paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: self-atlantis-oracle
-                    port:
-                      number: 80
+        name: &atlantis-config-secret atlantis-config-secret
+        template:
+          engineVersion: v2
+          data:
+              github_appid: "{{`{{ .github_appid }}`}}"
+              gh_webhook_secret: "{{`{{ .gh_webhook_secret }}`}}"
+              key.pem: "{{`{{ .github_private_key_base64 | b64dec }}`}}"
 
 atlantisUrl: http://atlantis.ronaldmiranda.com.br
 
 vcsSecretName: *github-secret
+
+orgAllowlist: "github.com/ronald-s-homelab/*"
 
 githubApp:
   foo: bar
@@ -45,14 +32,37 @@ githubApp:
 environmentSecrets:
   - name: ATLANTIS_GH_APP_ID
     secretKeyRef:
-      name: *github-secret
+      name: *atlantis-config-secret
       key: github_appid
+  - name: ATLANTIS_GH_APP_KEY
+    secretKeyRef:
+      name: *atlantis-config-secret
+      key: key.pem
+  - name: ATLANTIS_GH_WEBHOOK_SECRET
+    secretKeyRef:
+      name: *atlantis-config-secret
+      key: gh_webhook_secret
 
 test:
   enabled: false
 
+# image:
+#   repository: flaconi/atlantis-terragrunt
+#   tag: 0.19.7-1.2.6-0.38.6-0.10.1
+
 ingress:
-  enabled: false
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - host: atlantis.ronaldmiranda.com.br
+      paths:
+        - "/"
+  tls:
+    - secretName: ronaldmiranda-tls
+      hosts:
+        - atlantis.ronaldmiranda.com.br
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 
 service:
   type: ClusterIP
