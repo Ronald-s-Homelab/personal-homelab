@@ -34,10 +34,6 @@ environmentSecrets:
     secretKeyRef:
       name: *atlantis-config-secret
       key: github_appid
-  - name: ATLANTIS_GH_APP_KEY
-    secretKeyRef:
-      name: *atlantis-config-secret
-      key: key.pem
 
 test:
   enabled: false
