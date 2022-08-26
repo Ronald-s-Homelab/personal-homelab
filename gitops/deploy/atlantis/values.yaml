@@ -61,8 +61,8 @@ service:
 
 repoConfig: |
   repos:
-  - id: /.*/
-    apply_requirements: [mergeable]
+  - id: github.com/Ronald-s-Homelab/atlantis-test
+    apply_requirements: [mergeable, approved]
     delete_source_branch_on_merge: true
     pre_workflow_hooks:
       - run: terragrunt-atlantis-config generate --output atlantis.yaml --autoplan --parallel
