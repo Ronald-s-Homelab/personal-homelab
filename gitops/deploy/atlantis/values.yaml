@@ -62,7 +62,7 @@ service:
 repoConfig: |
   repos:
   - id: github.com/Ronald-s-Homelab/atlantis-test
-    branch: ./(develop|LCH-)([0-9]*)/
+    branch: /(develop|LCH-)([0-9]*)$/
     apply_requirements: [mergeable, approved]
     delete_source_branch_on_merge: true
     pre_workflow_hooks:
