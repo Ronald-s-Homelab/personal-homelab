@@ -62,11 +62,11 @@ service:
 repoConfig: |
   repos:
   - id: github.com/Ronald-s-Homelab/atlantis-test
-    branch: /(develop|LCH-)([0-9]*)$/
+    branch: /^(?i)(develop|lc[a-zA-Z]{1,3}-(\d+))$/
     apply_requirements: [mergeable, approved]
     delete_source_branch_on_merge: true
     pre_workflow_hooks:
-      - run: terragrunt-atlantis-config generate --output atlantis.yaml --autoplan --parallel
+      - run: terragrunt-atlantis-config generate --output atlantis.yaml --parallel
     workflow: terragrunt
   workflows:
     terragrunt:
