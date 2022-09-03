@@ -72,6 +72,7 @@ repoConfig: |
             --autoplan --parallel
             --create-project-name
             '
+      - run: yq -i '.projects = (.projects | map(select(.workflow == "terragrunt_nonprd")))' atlantis.yaml
     workflow: default
     allowed_overrides: [workflow]
   workflows:
