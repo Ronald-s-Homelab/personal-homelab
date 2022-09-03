@@ -40,7 +40,7 @@ test:
 
 image:
   repository: ronaldmiranda/atlantis
-  tag: latest
+  tag: "0.20"
 
 ingress:
   enabled: true
