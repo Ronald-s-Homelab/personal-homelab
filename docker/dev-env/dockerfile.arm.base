@@ -38,6 +38,7 @@ RUN sudo apt-get update \
     vim \
     zsh \
     fzf \
+    yq \
   && sudo rm -rf /var/lib/apt/lists/*
 
 # Docker Client.
@@ -50,7 +51,7 @@ RUN DOCKER_VERSION="20.10.6" \
 
 # Terraform.
 
-RUN TERRAFORM_VERSION="1.1.9" \
+RUN TERRAFORM_VERSION="1.2.0" \
   && curl -o terraform_linux_arm64.zip -fsSL \
   "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip" \
   && unzip terraform_linux_arm64.zip -d /usr/local/bin \
@@ -60,12 +61,22 @@ RUN TERRAFORM_VERSION="1.1.9" \
 
 # Terragrunt.
 
-RUN TERRAGRUNT_VERSION="0.37.1" \
+RUN TERRAGRUNT_VERSION="0.38.0" \
   && curl -o /usr/local/bin/terragrunt -fsSL \
   "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_arm64" \
   && chmod +x /usr/local/bin/terragrunt \
   && terragrunt -v \
   && unset TERRAGRUNT_VERSION
+
+# terragrunt-atlantis-config.
+
+RUN TERRAGRUNT_ATLANTIS_CONFIG_VERSION="1.15.0" \
+  && curl -o terragrunt_atlantis_config.tar.gz -fsSL \
+  "https://github.com/transcend-io/terragrunt-atlantis-config/releases/download/v${TERRAGRUNT_ATLANTIS_CONFIG_VERSION}/terragrunt-atlantis-config_${TERRAGRUNT_ATLANTIS_CONFIG_VERSION}_linux_arm.tar.gz"
+  && tar -xzvf terragrunt_atlantis_config.tar.gz -C /usr/local/bin \
+  && terragrunt-atlantis-config version \
+  && rm -f terragrunt_atlantis_config.tar.gz \
+  && unset TERRAGRUNT_ATLANTIS_CONFIG_VERSION
 
 # Kubectl.
 
