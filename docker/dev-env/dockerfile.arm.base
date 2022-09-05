@@ -1,4 +1,6 @@
-FROM debian:10-slim
+FROM ronaldmiranda/terragrunt-atlantis-config:1.15.0 as terragrunt-atlantis-binary
+
+FROM debian:11.4-slim
 
 # APT INSTALL
 
@@ -38,7 +40,6 @@ RUN sudo apt-get update \
     vim \
     zsh \
     fzf \
-    yq \
   && sudo rm -rf /var/lib/apt/lists/*
 
 # Docker Client.
@@ -59,6 +60,15 @@ RUN TERRAFORM_VERSION="1.2.0" \
   && rm -f terraform_linux_arm64.zip \
   && unset TERRAFORM_VERSION
 
+# yq.
+
+RUN YQ_VERSION="4.27.3" \
+  && curl -o /usr/local/bin/yq -fsSL \
+  "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_arm64" \
+  && chmod +x /usr/local/bin/yq \
+  && yq -V \
+  && unset YQ_VERSION
+
 # Terragrunt.
 
 RUN TERRAGRUNT_VERSION="0.38.0" \
@@ -70,13 +80,8 @@ RUN TERRAGRUNT_VERSION="0.38.0" \
 
 # terragrunt-atlantis-config.
 
-RUN TERRAGRUNT_ATLANTIS_CONFIG_VERSION="1.15.0" \
-  && curl -o terragrunt_atlantis_config.tar.gz -fsSL \
-  "https://github.com/transcend-io/terragrunt-atlantis-config/releases/download/v${TERRAGRUNT_ATLANTIS_CONFIG_VERSION}/terragrunt-atlantis-config_${TERRAGRUNT_ATLANTIS_CONFIG_VERSION}_linux_arm.tar.gz"
-  && tar -xzvf terragrunt_atlantis_config.tar.gz -C /usr/local/bin \
-  && terragrunt-atlantis-config version \
-  && rm -f terragrunt_atlantis_config.tar.gz \
-  && unset TERRAGRUNT_ATLANTIS_CONFIG_VERSION
+COPY --from=terragrunt-atlantis-binary /app/terragrunt-atlantis-config /usr/local/bin/terragrunt-atlantis-config
+RUN terragrunt-atlantis-config version
 
 # Kubectl.
 
@@ -156,7 +161,7 @@ RUN HELM_VERSION="3.8.1" \
   && unset HELM_VERSION
 
 # Azure CLI.
-RUN python3 -m pip install azure.cli
+RUN python3 -m pip install azure.cli==2.39.0
 
 # Gcloud.
 
