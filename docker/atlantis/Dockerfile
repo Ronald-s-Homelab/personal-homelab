@@ -2,14 +2,21 @@ ARG ATLANTIS
 FROM ghcr.io/runatlantis/atlantis:v${ATLANTIS}
 
 RUN apk add \
-	aws-cli \
 	curl \
-	make \
 	unzip
 
 ARG TERRAGRUNT
 ARG TERRAFORM
 ARG TERRAGRUNT_ATLANTIS_CONFIG
+
+# yq.
+
+RUN YQ_VERSION="4.27.3" \
+  && curl -o /usr/local/bin/yq -fsSL \
+  "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_arm64" \
+  && chmod +x /usr/local/bin/yq \
+  && yq -V \
+  && unset YQ_VERSION
 
 ###
 ### Ensure Terraform version is present, linked and validated
