@@ -61,32 +61,37 @@ service:
 
 repoConfig: |
   repos:
-  - id: github.com/Ronald-s-Homelab/atlantis-test
-    branch: /^(?i)(develop|lc[a-zA-Z]{1,3}-(\d+))$/
-    apply_requirements: [mergeable]
-    delete_source_branch_on_merge: true
-    pre_workflow_hooks:
-      - run: '
-          terragrunt-atlantis-config generate
-            --output atlantis.yaml
-            --autoplan --parallel
-            --create-project-name
-            '
-      - run: yq -i '.projects = (.projects | map(select(.workflow == "terragrunt_nonprd")))' atlantis.yaml
-    workflow: default
-    allowed_overrides: [workflow]
+    - id: /.*/
+      branch: /^(?i)(develop|lc[a-zA-Z]{1,3}-(\d+))$/
+      allowed_overrides: [apply_requirements, workflow, delete_source_branch_on_merge]
+      apply_requirements: [mergeable, undiverged, approved]
+      delete_source_branch_on_merge: true
+      workflow: default
+
+    - id: /.*(\/atlantis-test)$/
+      branch: /^(?i)(develop|lc[a-zA-Z]{1,3}-(\d+))$/
+      pre_workflow_hooks:
+        - run: >-
+            terragrunt-atlantis-config generate
+              --output atlantis.yaml
+              --parallel
+              --apply-requirements approved,mergeable,undiverged
+              --create-project-name
+              --workflow dummy
+        - run: yq -i '.projects = (.projects | map(select(.workflow == "terragrunt_nonprd")))' atlantis.yaml
+
   workflows:
+    dummy:
+      plan:
+        steps:
+          - run: exit 0
+      apply:
+        steps:
+          - run: exit 0
     terragrunt_nonprd:
       plan:
         steps:
           - run: terragrunt plan -no-color -out $PLANFILE
       apply:
         steps:
-        - run: terragrunt apply -no-color $PLANFILE
-    terragrunt_prd:
-      plan:
-        steps:
-          - run: exit 0
-      apply:
-        steps:
-        - run: exit 0
+          - run: terragrunt apply -no-color $PLANFILE
