@@ -2,6 +2,6 @@ locals {
   inputs = yamldecode(file("input.yaml"))
 }
 
-variable "discord_bot_token" {
+variable "DISCORD_BOT_TOKEN" {
   type = string
 }

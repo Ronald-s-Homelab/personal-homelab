@@ -1,5 +1,5 @@
 provider "discord" {
-  token = var.discord_bot_token
+  token = var.DISCORD_BOT_TOKEN
 }
 
 module "discord_server" {
