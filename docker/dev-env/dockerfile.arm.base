@@ -52,7 +52,7 @@ RUN DOCKER_VERSION="20.10.6" \
 
 # Terraform.
 
-RUN TERRAFORM_VERSION="1.2.0" \
+RUN TERRAFORM_VERSION="1.3.7" \
   && curl -o terraform_linux_arm64.zip -fsSL \
   "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_arm64.zip" \
   && unzip terraform_linux_arm64.zip -d /usr/local/bin \
@@ -71,7 +71,7 @@ RUN YQ_VERSION="4.27.3" \
 
 # Terragrunt.
 
-RUN TERRAGRUNT_VERSION="0.38.0" \
+RUN TERRAGRUNT_VERSION="0.43.2" \
   && curl -o /usr/local/bin/terragrunt -fsSL \
   "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_arm64" \
   && chmod +x /usr/local/bin/terragrunt \
@@ -141,7 +141,7 @@ RUN TELEPORT_VERSION="8.0.7" \
 
 # k9s
 
-RUN K9S_VERSION="0.25.18" \
+RUN K9S_VERSION="0.27.2" \
   curl -o k9s.tar.gz -fsSL \
     https://github.com/derailed/k9s/releases/download/v0.25.18/k9s_Linux_arm64.tar.gz \
   && tar -zxvf k9s.tar.gz -C /bin \
@@ -182,7 +182,7 @@ RUN ARGO_VERSION='2.3.3' \
 
 # 1Password CLI
 
-RUN OP_VERSION='2.0.0' \
+RUN OP_VERSION='2.13.1' \
   && curl -fsSLO \
     "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_arm64_v${OP_VERSION}.zip" \
   && unzip op_linux_arm64_v${OP_VERSION}.zip && mv op /usr/bin \
