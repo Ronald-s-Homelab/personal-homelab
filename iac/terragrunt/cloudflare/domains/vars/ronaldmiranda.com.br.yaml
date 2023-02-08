@@ -1,86 +1,101 @@
-a_records:
-  casa:
+zone_id: d34b9b7f0a164010a0a262b8e5636a58
+zone: ronaldmiranda.com.br
+
+records:
+  - key: casa
+    type: A
     enabled: true
     name: casa
     ttl: 300
     value: 192.168.3.2
-  cctv:
-    enabled: true
+  - key: cctv
+    type: A
+    enabled: false
     name: cctv
     ttl: 300
-    value: 140.238.239.7
-  teleport:
+    value: 168.138.249.18
+  - key: teleport
+    type: A
     enabled: true
     name: teleport
     ttl: 300
-    value: 140.238.239.7
+    value: 168.138.249.18
 
-cname_records:
-  cftv:
+  - key: cftv
+    type: CNAME
     enabled: true
     name: cftv.teleport
     ttl: 300
     value: teleport.ronaldmiranda.com.br
-  roteador:
+  - key: roteador
+    type: CNAME
     enabled: true
     name: roteador.teleport
     ttl: 300
     value: teleport.ronaldmiranda.com.br
-  vault:
+  - key: vault
+    type: CNAME
     enabled: true
     name: vault
     ttl: 300
     value: teleport.ronaldmiranda.com.br
 
-mx_records:
-  alt1_aspmx:
+  - key: alt1_aspmx
+    type: MX
     enabled: true
     name: ronaldmiranda.com.br
     priority: 5
     ttl: 300
     value: alt1.aspmx.l.google.com
-  alt2_aspmx:
+  - key: alt2_aspmx
+    type: MX
     enabled: true
     name: ronaldmiranda.com.br
     priority: 5
     ttl: 300
     value: alt2.aspmx.l.google.com
-  alt3_aspmx:
+  - key: alt3_aspmx
+    type: MX
     enabled: true
     name: ronaldmiranda.com.br
     priority: 10
     ttl: 300
     value: alt3.aspmx.l.google.com
-  alt4_aspmx:
+  - key: alt4_aspmx
+    type: MX
     enabled: true
     name: ronaldmiranda.com.br
     priority: 10
     ttl: 300
     value: alt4.aspmx.l.google.com
-  aspmx1:
+  - key: aspmx1
+    type: MX
     enabled: true
     name: ronaldmiranda.com.br
     priority: 1
     ttl: 300
     value: aspmx.l.google.com
 
-txt_records:
-  dmarc:
+  - key: dmarc
+    type: TXT
     enabled: true
     name: _dmarc
     value: v=DMARC1; p=none; rua=mailto:no-reply@ronaldmiranda.com.br
     ttl: 300
-  google_domain_key:
+  - key: google_domain_key
+    type: TXT
     enabled: true
     name: google._domainkey
     value: v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjCe+GFw2XUnOKooLVOJM697sPsxn720OENsYre7XE7bOm2YXxvsapz8WSErUtAPF73i75jQrd0XrRtVVPr3NhWUro28QR5PWfm5s6SWg8tbNKaq6xEvqma1WoBxK3eIMo8m8yWfKdbjFBzqoUQb/z8E6qoYQ/u2AmVou9UaaWxkKAON4GfFZtjMHBav4Qelo6aubuSueo0JwDLqSN2/fWrdMjcuwvRm8JPo1cKnIwDsbaCu7pk5DnBgFHhtQfjaBFzQ+UUJW09XU27lUbeLiXKNVsE9qxPMF09iktgAD6qCXk4738ry4Jo2i1DwhlOWd8AhEWjpgMqgLg4fu+iJe7QIDAQAB
     ttl: 300
-  google_site_verification:
+  - key: google_site_verification
+    type: TXT
     enabled: true
     name: ronaldmiranda.com.br
     value: google-site-verification=tVU9R0a9aNy6Cbix_RqNuwgwSdPsdegvD0MYLIjKZkU
     ttl: 300
-  spf:
+  - key: spf
+    type: TXT
     enabled: true
     name: ronaldmiranda.com.br
     value: v=spf1 include:_spf.google.com ~all

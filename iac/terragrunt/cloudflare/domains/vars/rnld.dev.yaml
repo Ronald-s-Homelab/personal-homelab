@@ -1,55 +1,67 @@
-cname_records:
-  landing_page:
-    enabled: true
+zone_id: b157ae325c6a0ba01fb86c6b16cfda5d
+zone: rnld.dev
+
+records:
+  - enabled: true
     name: www
     value: cname.vercel-dns.com
     ttl: 300
+    type: CNAME
 
-mx_records:
-  alt1_aspmx:
-    enabled: true
-    name: rnld.dev
+  - enabled: true
+    name: "@"
     priority: 5
     ttl: 300
     value: alt1.aspmx.l.google.com
-  alt2_aspmx:
-    enabled: true
-    name: rnld.dev
+    key: alt1.aspmx.l.google.com
+    type: MX
+  - enabled: true
+    name: "@"
     priority: 5
     ttl: 300
     value: alt2.aspmx.l.google.com
-  alt3_aspmx:
-    enabled: true
-    name: rnld.dev
+    key: alt2.aspmx.l.google.com
+    type: MX
+  - enabled: true
+    name: "@"
     priority: 10
     ttl: 300
     value: alt3.aspmx.l.google.com
-  alt4_aspmx:
-    enabled: true
-    name: rnld.dev
+    key: alt3.aspmx.l.google.com
+    type: MX
+  - enabled: true
+    name: "@"
     priority: 10
     ttl: 300
     value: alt4.aspmx.l.google.com
-  aspmx1:
-    enabled: true
-    name: rnld.dev
+    key: alt4.aspmx.l.google.com
+    type: MX
+  - enabled: true
+    name: "@"
     priority: 1
     ttl: 300
     value: aspmx.l.google.com
+    key: aspmx.l.google.com
+    type: MX
 
-txt_records:
-  dmarc:
-    enabled: true
+  - enabled: true
     name: _dmarc
     value: v=DMARC1; p=none; rua=mailto:no-reply@ronaldmiranda.com.br
     ttl: 1
-  google_domain_key:
-    enabled: true
+    type: TXT
+  - enabled: true
+    key: keybase
+    name: "@"
+    value: keybase-site-verification=dKTxYiGZgKoJNcJ7dWHW2xxa2GkeA6MjmcvORXGm7C4
+    ttl: 1
+    type: TXT
+  - enabled: true
     name: google._domainkey
     value: v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjWvkNuJtjS4aUzzNcLYc0EzDItrrIZzUFan/hhBjaiauVKX9E+c5D5GN3N/MPdm6iJamdFi/DbZWZr453xYk1dY9vojpdCTybJOYzKZkYN2eEclqNyHUBhJiZxclkEadDXq/E7ewimv8qtlISCc35D3JW5YM9DrSHJQy9JoBQx1e3NkDojtSCql3e3JLgp+s1 RMVqxDxnYYyhQvIBgO2kMbzX6nv8+Q0Psup0Sv0y3jR/50IDSLmWwW2IQFjs8NWF6cyUf36kMCWlnrpGjP025Kx+iq3fBSAFPxuNPowAnJ1nZil05p+RnxzpNuQTAEaMBN+JH35HbrPYhGRT6PbuQIDAQAB
     ttl: 1
-  spf:
-    enabled: true
+    type: TXT
+  - enabled: true
     name: rnld.dev
     value: v=spf1 include:_spf.google.com ~all
     ttl: 1
+    type: TXT
