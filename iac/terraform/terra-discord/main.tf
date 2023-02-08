@@ -3,7 +3,7 @@ provider "discord" {
 }
 
 module "discord_server" {
-  for_each = local.inputs
+  for_each = local.inputs.discords
   source   = "./modules"
 
   # invite_ch_id = each.value.invite_ch_id
@@ -13,8 +13,11 @@ module "discord_server" {
   roles   = each.value.roles
 }
 
-output "servers" {
-  value = module.discord_server
+module "github" {
+  source = "../modules/github"
+
+  repositories = local.inputs.github.repositories
+  teams        = local.inputs.github.teams
 }
 
 terraform {

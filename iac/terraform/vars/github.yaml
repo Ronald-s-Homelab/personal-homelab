@@ -1,0 +1,22 @@
+repositories:
+  personal-homelab:
+    description: for personal environment.
+    visibility: public
+teams:
+  internal-team:
+    description: test
+    privacy: closed
+
+  devops-admins:
+    description: for the org's admin
+    parent: internal-team
+    members:
+      ronaldmiranda:
+        role: maintainer
+
+  devops:
+    description: for guest devops participants.
+    privacy: secret
+    members:
+      ronaldmiranda:
+        role: maintainer

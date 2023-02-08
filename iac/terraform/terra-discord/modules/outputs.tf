@@ -2,9 +2,9 @@
 #   value = local.members
 # }
 
-output "invites" {
-  value = format("https://discord.gg/%s", discord_invite.invite.id)
-}
+# output "invites" {
+#   value = format("https://discord.gg/%s", discord_invite.invite.id)
+# }
 
 # locals {
 #   members = { for k, v in module.members : k => {

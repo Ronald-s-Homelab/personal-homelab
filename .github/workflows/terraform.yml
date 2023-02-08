@@ -5,11 +5,13 @@ on:
       - main
     paths:
       - iac/terraform/terra-discord/**
+      - iac/terraform/vars/*.yaml
   pull_request:
     branches:
       - main
     paths:
       - iac/terraform/terra-discord/**
+      - iac/terraform/vars/*.yaml
 
 env:
   # verbosity setting for Terraform logs
