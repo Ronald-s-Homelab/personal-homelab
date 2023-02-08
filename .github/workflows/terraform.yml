@@ -15,7 +15,6 @@ env:
   # verbosity setting for Terraform logs
   TF_LOG: INFO
   # Credentials for deployment to AWS
-  SECRETS_PATH: "/secrets/backends.tf"
   TF_VAR_DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
 jobs:
@@ -39,7 +38,7 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init -backend-config="${{ SECRETS_PATH }}"
+        run: terraform init -backend-config="/secrets/backends.tf"
 
       - name: Terraform format
         id: fmt
