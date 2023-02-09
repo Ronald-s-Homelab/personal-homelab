@@ -6,11 +6,11 @@ module "discord_server" {
   for_each = local.inputs.discords
   source   = "./modules"
 
-  # invite_ch_id = each.value.invite_ch_id
-  members = each.value.members
-  name    = each.key
-  region  = each.value.region
-  roles   = each.value.roles
+  invite_ch_id = each.value.invite_ch_id
+  members      = each.value.members
+  name         = replace(each.key, "_", " ")
+  region       = each.value.region
+  roles        = each.value.roles
 }
 
 module "github" {
@@ -18,6 +18,10 @@ module "github" {
 
   repositories = local.inputs.github.repositories
   teams        = local.inputs.github.teams
+}
+
+output "invites" {
+  value = {for k,v in module.discord_server: k => v.invites }
 }
 
 terraform {

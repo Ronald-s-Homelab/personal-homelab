@@ -1,16 +1,16 @@
-teste:
+Canal_do_Ronald:
   region: brazil
-  invite_ch_id: 1071669586249924638
+  invite_ch_id: 501106542599340032
   roles:
-    administrador:
+    teste:
       config:
         hoist: false
         mentionable: false
-        position: 5
+        color: 15844367
       discord_perms:
-        administrator: allow
+        connect: allow
 
   members:
     RRonaldM#8474:
       teams:
-        - administrador
+        - teste

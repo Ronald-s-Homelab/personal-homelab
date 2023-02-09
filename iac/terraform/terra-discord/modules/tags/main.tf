@@ -4,6 +4,7 @@ resource "discord_role" "role" {
   server_id   = var.server_id
   name        = each.key
   permissions = data.discord_permission.perm[each.key].allow_bits
+  color       = each.value.config.color
   hoist       = each.value.config.hoist
   mentionable = each.value.config.mentionable
   position    = each.value.config.position

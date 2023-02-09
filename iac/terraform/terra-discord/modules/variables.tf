@@ -6,9 +6,9 @@ variable "region" {
   type = string
 }
 
-# variable "invite_ch_id" {
-#   type = number
-# }
+variable "invite_ch_id" {
+  type = number
+}
 
 variable "members" {
   type = map(object({
@@ -26,7 +26,8 @@ variable "roles" {
     config = object({
       hoist       = bool
       mentionable = bool
-      position    = number
+      position    = optional(number)
+      color       = number
     })
     discord_perms = object({
       add_reactions             = optional(string, "unset")

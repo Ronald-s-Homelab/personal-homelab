@@ -2,9 +2,10 @@ repositories:
   personal-homelab:
     description: for personal environment.
     visibility: public
+
 teams:
   internal-team:
-    description: test
+    description: For testing purposes
     privacy: closed
 
   devops-admins:
