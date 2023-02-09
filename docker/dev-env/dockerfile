@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install sudo -y
 RUN eval $groupcmd
 
 RUN echo "${user}    ALL=NOPASSWD: ALL" > /etc/sudoers
-RUN chown $uid:$gid /usr/local/bin /etc/profile.d/ /home/$user
+RUN mkdir /mnt/sock
+RUN chown $uid:$gid /usr/local/bin /etc/profile.d/ /home/$user /mnt/sock
 USER $user
 
 # Developer environment.

@@ -32,6 +32,7 @@ RUN sudo apt-get update \
     python3-pip \
     python3-setuptools \
     python3-wheel \
+    socat \
     ssh \
     sshfs \
     tmux \
@@ -151,7 +152,7 @@ RUN K9S_VERSION="0.27.2" \
 
 # Helm
 
-RUN HELM_VERSION="3.8.1" \
+RUN HELM_VERSION="3.11.1" \
   && curl -o helm-arm64.tar.gz -fsSL \
   "https://get.helm.sh/helm-v${HELM_VERSION}-linux-arm64.tar.gz" \
   && tar -zxvf helm-arm64.tar.gz \
@@ -165,7 +166,7 @@ RUN python3 -m pip install azure.cli==2.39.0
 
 # Gcloud.
 
-RUN GCLOUD_VERSION="378.0.0" \
+RUN GCLOUD_VERSION="415.0.0" \
   && curl -o google-cloud-sdk.tar.gz -fsSL \
   "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-arm.tar.gz" \
   && tar -xzvf google-cloud-sdk.tar.gz -C /bin \

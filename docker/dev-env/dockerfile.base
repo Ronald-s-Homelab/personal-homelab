@@ -22,6 +22,7 @@ RUN apt-get update \
   less="487*" \
   lsb-release \
   netcat="1.10*" \
+  socat \
   ssh="1:7*" \
   sshfs="2.*" \
   telnet="0.17*" \
@@ -163,7 +164,7 @@ RUN K3D_VERSION="4.4.5"\
 
 # Helm
 
-RUN HELM_VERSION="3.8.1" \
+RUN HELM_VERSION="3.11.1" \
   && curl -o helm-amd64.tar.gz -fsSL \
   "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" \
   && tar -zxvf helm-amd64.tar.gz \

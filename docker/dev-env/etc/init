@@ -4,7 +4,7 @@ set -euo pipefail
 
 ALWAYS_UPDATE="${ALWAYS_UPDATE:-true}"
 
-gcloud auth login --no-launch-browser && gcloud config set project ronaldmiranda
+gcloud auth login --no-browser && gcloud config set project ronaldmiranda
 
 dlogin(){
   TEMP_DIR=$(mktemp -d)
@@ -13,6 +13,10 @@ dlogin(){
   cat ${TEMP_DIR}/dockerhub_token | docker login -u $1 --password-stdin
   rm -rf $TEMP_DIR
   unset TEMP_DIR
+}
+
+socat(){
+  socat UNIX-LISTEN:/mnt/sock/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345 &
 }
 
 if [ ! -d ~/.secrets ]; then
@@ -47,3 +51,5 @@ if [ "$(git config --get commit.gpgsign)" == "" ]; then
   git config --global user.name ronaldmiranda
   git config --global user.email r@ronaldmiranda.com.br
 fi
+
+socat
