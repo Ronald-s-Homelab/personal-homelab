@@ -9,6 +9,7 @@ ENV TZ='America/Recife'
 RUN apt-get update && apt-get install sudo -y
 
 RUN sudo apt-get update && DEBIAN_FRONTEND="noninteractive" sudo apt-get -y install tzdata
+
 RUN sudo apt-get update \
   && DEBIAN_FRONTEND="noninteractive" sudo apt-get install -y --no-install-recommends \
     apt-transport-https \
@@ -43,13 +44,6 @@ RUN sudo apt-get update \
     fzf \
   && sudo rm -rf /var/lib/apt/lists/*
 
-# Install powelevel10k theme
-
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
-
-# Install default plugins
-RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
-RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
 
 # ZSH
 
@@ -59,6 +53,14 @@ ENV ZSH_CUSTOM=$ZSH/custom
 RUN bash -c \
   "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/oh-my-zsh/master/tools/install.sh)" --unattended \
   && zsh -c 'autoload -U compinit && compinit'
+
+# Install powelevel10k theme
+
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
+
+# Install default plugins
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
 
 # Azure CLI.
 RUN python3 -m pip install azure.cli==2.39.0
