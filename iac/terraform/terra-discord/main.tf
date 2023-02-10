@@ -22,7 +22,7 @@ module "github" {
 }
 
 output "invites" {
-  value = {for k,v in module.discord_server: k => v.invites }
+  value = { for k, v in module.discord_server : k => v.invites }
 }
 
 terraform {
