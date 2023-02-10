@@ -15,3 +15,7 @@ variable "teams" {
     })), {})
   }))
 }
+
+variable "org_name" {
+  type = string
+}
