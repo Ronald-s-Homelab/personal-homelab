@@ -40,7 +40,7 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init -backend-config="/secrets/backends.tf"
+        run: terraform init -backend-config="~/.secrets/backends.tf"
 
       - name: Terraform format
         id: fmt
