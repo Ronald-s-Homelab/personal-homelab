@@ -6,7 +6,7 @@ COMMAND=${1:-"run"}
 
 DOCKER_REPOSITORY="ronaldmiranda/dev-env"
 DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202204111109-9a8384c"}
-DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202302081406-fc83415"}
+DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202302092212-6e14ccc"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
 CONTAINER_NAME='devenv-personal'
@@ -70,6 +70,7 @@ run(){
     '-it'
     '-v dev-env-pessoal:/home/'$USER''
     '-v '$HOME':/dojo/identity'
+    '-v '$HOME'/.config:/home/'$USER'/.config'
     '--net host'
   )
 
