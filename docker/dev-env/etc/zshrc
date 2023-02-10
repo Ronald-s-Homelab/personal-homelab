@@ -21,7 +21,14 @@ export TF_VAR_AZ_TENANT_ID='op://cli/terraform-azure-sp/AZ_TENANT_ID'
 export TF_VAR_MINIO_USER='op://cli/minio-local/user'
 export TF_VAR_MINIO_KEY='op://cli/minio-local/secret'
 
+export TF_VAR_DISCORD_BOT_TOKEN='op://cli/discord-tf-bot/token'
+
 export TF_VAR_VAULT_TOKEN='op://private/home-hashicorp-vault/ROOT'
+
+# ronald-s-homelab github app
+export GITHUB_APP_ID='op://cli/github-app-terraform/appid'
+export GITHUB_APP_INSTALLATION_ID='op://cli/github-app-terraform/installationId'
+export GITHUB_APP_PEM_FILE='op://cli/github-app-terraform/chaveprivada'
 
 function zsh_configured() {
   while true; do

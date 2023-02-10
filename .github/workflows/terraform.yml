@@ -5,15 +5,18 @@ on:
       - main
     paths:
       - iac/terraform/terra-discord/**
+      - iac/terraform/vars/*.yaml
   pull_request:
     branches:
       - main
     paths:
       - iac/terraform/terra-discord/**
+      - iac/terraform/vars/*.yaml
 
 env:
   # verbosity setting for Terraform logs
   TF_LOG: INFO
+
   # Credentials for deployment to AWS
   TF_VAR_DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
 
@@ -38,7 +41,7 @@ jobs:
 
       - name: Terraform init
         id: init
-        run: terraform init -backend-config="/secrets/backends.tf"
+        run: terraform init -backend-config="/home/runner/.secrets/backends.tf"
 
       - name: Terraform format
         id: fmt
