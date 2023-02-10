@@ -32,6 +32,7 @@ RUN sudo apt-get update \
     python3-pip \
     python3-setuptools \
     python3-wheel \
+    socat="1.7.*" \
     ssh \
     sshfs \
     tmux \
@@ -41,6 +42,36 @@ RUN sudo apt-get update \
     zsh \
     fzf \
   && sudo rm -rf /var/lib/apt/lists/*
+
+# Install powelevel10k theme
+
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
+
+# Install default plugins
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
+
+# ZSH
+
+ENV ZSH='/etc/rc/.oh-my-zsh'
+ENV ZSH_CUSTOM=$ZSH/custom
+
+RUN bash -c \
+  "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/oh-my-zsh/master/tools/install.sh)" --unattended \
+  && zsh -c 'autoload -U compinit && compinit'
+
+# Azure CLI.
+RUN python3 -m pip install azure.cli==2.39.0
+
+# Gcloud.
+
+RUN GCLOUD_VERSION="415.0.0" \
+  && curl -o google-cloud-sdk.tar.gz -fsSL \
+  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-arm.tar.gz" \
+  && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
+  && /bin/google-cloud-sdk/install.sh -q \
+  && rm -f google-cloud-sdk.tar.gz \
+  && unset GCLOUD_VERSION
 
 # Docker Client.
 
@@ -85,7 +116,7 @@ RUN terragrunt-atlantis-config version
 
 # Kubectl.
 
-RUN KUBECTL_VERSION="1.20.0" \
+RUN KUBECTL_VERSION="1.22.0" \
   && curl -o /usr/local/bin/kubectl -fsSL \
   "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/arm64/kubectl" \
   && chmod +x /usr/local/bin/kubectl \
@@ -114,27 +145,10 @@ RUN KUBENS_VERSION="0.9.4" \
   && rm -f kubens_linux_arm64.tar.gz \
   && unset KUBENS_VERSION
 
-# ZSH
-
-ENV ZSH='/etc/rc/.oh-my-zsh'
-ENV ZSH_CUSTOM=$ZSH/custom
-
-RUN bash -c \
-  "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/oh-my-zsh/master/tools/install.sh)" --unattended \
-  && zsh -c 'autoload -U compinit && compinit'
-
-# Install powelevel10k theme
-
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
-
-# Install default plugins
-RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
-RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
-
 # Teleport
 
-RUN TELEPORT_VERSION="8.0.7" \
-  && curl -O https://get.gravitational.com/teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz \
+RUN TELEPORT_VERSION="11.3.3" \
+  && curl -O https://cdn.teleport.dev/teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz \
   && tar -xzf teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz \
   && cd teleport && sudo ./install \
   cd .. && rm -rf teleport teleport-v${TELEPORT_VERSION}-linux-arm64-bin.tar.gz
@@ -151,7 +165,7 @@ RUN K9S_VERSION="0.27.2" \
 
 # Helm
 
-RUN HELM_VERSION="3.8.1" \
+RUN HELM_VERSION="3.11.1" \
   && curl -o helm-arm64.tar.gz -fsSL \
   "https://get.helm.sh/helm-v${HELM_VERSION}-linux-arm64.tar.gz" \
   && tar -zxvf helm-arm64.tar.gz \
@@ -159,19 +173,6 @@ RUN HELM_VERSION="3.8.1" \
   && rm -rf helm-arm64.tar.gz linux-arm64 \
   && helm version \
   && unset HELM_VERSION
-
-# Azure CLI.
-RUN python3 -m pip install azure.cli==2.39.0
-
-# Gcloud.
-
-RUN GCLOUD_VERSION="378.0.0" \
-  && curl -o google-cloud-sdk.tar.gz -fsSL \
-  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-arm.tar.gz" \
-  && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
-  && /bin/google-cloud-sdk/install.sh -q \
-  && rm -f google-cloud-sdk.tar.gz \
-  && unset GCLOUD_VERSION
 
 # Argo CLI
 

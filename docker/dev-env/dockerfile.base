@@ -22,6 +22,7 @@ RUN apt-get update \
   less="487*" \
   lsb-release \
   netcat="1.10*" \
+  socat="1.7.*"\
   ssh="1:7*" \
   sshfs="2.*" \
   telnet="0.17*" \
@@ -32,6 +33,50 @@ RUN apt-get update \
   zsh="5.7*" \
   python3 python3-pip gdebi-core \
   && rm -rf /var/lib/apt/lists/*
+
+# ZSH
+
+ENV ZSH='/etc/zsh/.oh-my-zsh'
+ENV ZSH_CUSTOM=$ZSH/custom
+
+RUN bash -c \
+  "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/oh-my-zsh/master/tools/install.sh)" --unattended \
+  && zsh -c 'autoload -U compinit && compinit'
+
+# Install powelevel10k theme
+
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
+
+# Install default plugins
+RUN git clone \
+        https://github.com/zsh-users/zsh-syntax-highlighting.git \
+        ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
+
+RUN git clone \
+        https://github.com/zsh-users/zsh-autosuggestions \
+        ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
+
+# GCloud.
+
+RUN GCLOUD_VERSION="415.0.0" \
+  && curl -o google-cloud-sdk.tar.gz -fsSL \
+  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+  && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
+  && /bin/google-cloud-sdk/install.sh -q \
+  && rm -f google-cloud-sdk.tar.gz \
+  && unset GCLOUD_VERSION
+
+# Azure cli.
+
+RUN AZURE_CLI_VERSION="2.25*" \
+  && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ buster main" \
+  | tee /etc/apt/sources.list.d/azure-cli.list \
+  && curl -L https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends azure-cli="${AZURE_CLI_VERSION}" \
+  && rm -rf /var/lib/apt/lists/* \
+  && az -v \
+  && unset AZURE_CLI_VERSION
 
 # Docker Client.
 
@@ -69,7 +114,7 @@ RUN TERRAGRUNT_VERSION="0.43.2" \
 
 # Kubectl.
 
-RUN KUBECTL_VERSION="1.20.0" \
+RUN KUBECTL_VERSION="1.22.0" \
   && curl -o /bin/kubectl -fsSL \
   "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
   && chmod +x /bin/kubectl \
@@ -108,50 +153,6 @@ RUN K9S_VERSION="0.25.18" \
   && rm -rf k9s.tar.gz \
   && unset K9S_VERSION
 
-# GCloud.
-
-RUN GCLOUD_VERSION="394.0.0" \
-  && curl -o google-cloud-sdk.tar.gz -fsSL \
-  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
-  && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
-  && /bin/google-cloud-sdk/install.sh -q \
-  && rm -f google-cloud-sdk.tar.gz \
-  && unset GCLOUD_VERSION
-
-# Azure cli.
-
-RUN AZURE_CLI_VERSION="2.25*" \
-  && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ buster main" \
-  | tee /etc/apt/sources.list.d/azure-cli.list \
-  && curl -L https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends azure-cli="${AZURE_CLI_VERSION}" \
-  && rm -rf /var/lib/apt/lists/* \
-  && az -v \
-  && unset AZURE_CLI_VERSION
-
-# ZSH
-
-ENV ZSH='/etc/zsh/.oh-my-zsh'
-ENV ZSH_CUSTOM=$ZSH/custom
-
-RUN bash -c \
-  "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/oh-my-zsh/master/tools/install.sh)" --unattended \
-  && zsh -c 'autoload -U compinit && compinit'
-
-# Install powelevel10k theme
-
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM}/themes/powerlevel10k
-
-# Install default plugins
-RUN git clone \
-        https://github.com/zsh-users/zsh-syntax-highlighting.git \
-        ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
-
-RUN git clone \
-        https://github.com/zsh-users/zsh-autosuggestions \
-        ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
-
 # K3d
 
 RUN K3D_VERSION="4.4.5"\
@@ -163,7 +164,7 @@ RUN K3D_VERSION="4.4.5"\
 
 # Helm
 
-RUN HELM_VERSION="3.8.1" \
+RUN HELM_VERSION="3.11.1" \
   && curl -o helm-amd64.tar.gz -fsSL \
   "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" \
   && tar -zxvf helm-amd64.tar.gz \
@@ -174,9 +175,9 @@ RUN HELM_VERSION="3.8.1" \
 
 # Teleport
 
-RUN TP_VERSION="9.0.3" \
+RUN TP_VERSION="11.3.3" \
   && curl -o teleport.tar.gz -fsSL \
-  "https://get.gravitational.com/teleport-v${TP_VERSION}-linux-amd64-bin.tar.gz" \
+  "https://cdn.teleport.dev/teleport-v${TP_VERSION}-linux-amd64-bin.tar.gz" \
   && tar -xzf teleport.tar.gz \
   && mv teleport/tctl teleport/tsh /usr/local/bin/ \
   && rm -rf teleport teleport.tar.gz \

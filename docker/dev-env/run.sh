@@ -44,26 +44,6 @@ push(){
   docker push $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG
 }
 
-socatRun() {
-  declare -a socatArgs=(
-    '--name socat'
-    '-i'
-    '-d'
-    '--restart=always'
-    '-u '$(id -u $USER):$(id -g $USER)''
-    '-v sock-volume:/mnt/sock'
-  )
-
-  if [ ! "$(docker ps -q -f name=socat)" ]; then
-    if [ "$(docker ps -aq -f status=exited -f name=socat)" ]; then
-        # cleanup
-        docker rm socat
-    fi
-    docker run ${socatArgs[*]} \
-      alpine/socat UNIX-LISTEN:/mnt/sock/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345
-  fi
-}
-
 run(){
   _checkCPUPlatform
 
@@ -95,12 +75,11 @@ run(){
 
   if [[ "$(uname)" = "Darwin" ]]; then
     args+=(
+      '-e SSH_AUTH_SOCK=/mnt/sock/agent.sock'
       '-u '$(id -u $USER):$(id -g $USER)''
       '-e TZ='$(ls -la /etc/localtime | cut -d/ -f8-9)''
-      '-v sock-volume:/mnt/sock'
     )
-    socat TCP-LISTEN:12345,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:/tmp/agent.sock &
-    socatRun &
+    socat TCP-LISTEN:12345,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock &
   elif [[ "$(uname)" = "Linux" ]]; then
     args+=('
       -v '$(realpath /etc/localtime)':/etc/localtime:ro'
