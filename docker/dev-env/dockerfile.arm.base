@@ -6,11 +6,15 @@ FROM debian:11.4-slim
 
 ENV TZ='America/Recife'
 
-RUN apt-get update && apt-get install sudo -y
+RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+      apt-get update && apt-get install sudo -y \
+      && DEBIAN_FRONTEND="noninteractive" sudo apt-get -y install tzdata
 
-RUN sudo apt-get update && DEBIAN_FRONTEND="noninteractive" sudo apt-get -y install tzdata
-
-RUN sudo apt-get update \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+  sudo apt-get update \
   && DEBIAN_FRONTEND="noninteractive" sudo apt-get install -y --no-install-recommends \
     apt-transport-https \
     bash-completion \
@@ -190,3 +194,23 @@ RUN OP_VERSION='2.13.1' \
     "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_arm64_v${OP_VERSION}.zip" \
   && unzip op_linux_arm64_v${OP_VERSION}.zip && mv op /usr/bin \
   && rm op_linux_arm64_v${OP_VERSION}.zip
+
+# lego
+RUN LEGO_VERSION='4.9.1' TEMP_DIR=$(mktemp -d) \
+  && cd $TEMP_DIR \
+  && curl -fsSLO \
+    "https://github.com/go-acme/lego/releases/download/v${LEGO_VERSION}/lego_v${LEGO_VERSION}_linux_arm64.tar.gz" \
+  && tar -zxvf lego_v${LEGO_VERSION}_linux_arm64.tar.gz \
+  && mv lego /usr/local/bin/lego \
+  && rm -rf $TEMP_DIR \
+  && lego -h
+
+# doppler
+RUN DOPPLER_VERSION='3.56.0' TEMP_DIR=$(mktemp -d) \
+  && cd $TEMP_DIR \
+  && curl -fsSLO \
+    "https://github.com/DopplerHQ/cli/releases/download/${DOPPLER_VERSION}/doppler_${DOPPLER_VERSION}_linux_arm64.tar.gz" \
+  && tar -zxvf doppler_${DOPPLER_VERSION}_linux_arm64.tar.gz \
+  && mv doppler /usr/local/bin/doppler \
+  && rm -rf $TEMP_DIR \
+  && doppler -h

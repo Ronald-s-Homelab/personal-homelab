@@ -98,6 +98,9 @@ case $COMMAND in
   build-push)
     build
     push;;
+  build-run)
+    build
+    run;;
   run)
     run;;
 esac
