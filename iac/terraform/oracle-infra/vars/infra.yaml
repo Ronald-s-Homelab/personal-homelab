@@ -1,0 +1,63 @@
+compartment_id: ocid1.tenancy.oc1..aaaaaaaajulf7uino2waut4opdaqy6rnh2fa37k7ddz6c4svqxnrevyu2y5q
+
+vcn:
+  k3s-vcn:
+    enabled_nat: yes
+    cidr_block: 10.100.0.0/16
+    security_lists:
+      private-sec-list:
+        egress:
+          - proto: all
+            stateless: no
+            # ports: 7777
+        ingress:
+          - proto: all
+            stateless: no
+      public-sec-list:
+        egress:
+          - proto: all
+            stateless: no
+        ingress:
+          - source: 200.219.61.43/32
+            proto: all
+            stateless: no
+          - source: 10.100.0.0/16
+            proto: all
+            stateless: no
+          - proto: tcp
+            ports: 6443
+          - proto: tcp
+            ports: 443
+          - proto: tcp
+            ports: 80
+    subnets:
+      public:
+        cidr_block: 10.100.1.0/24
+        security_lists:
+          - public-sec-list
+      private:
+        nat: yes
+        cidr_block: 10.100.2.0/24
+        prohibit_public_ip_on_vnic: true
+        prohibit_internet_ingress: true
+        security_lists:
+          - private-sec-list
+
+compute:
+  k8s:
+    personal-k8s:
+      version: v1.25.4
+      vcn_name: k3s-vcn
+      lb_subnet: public
+      private_subnet: private
+      network_conf:
+        pods_cidr: 10.244.0.0/16
+        services_cidr: 10.96.0.0/16
+      node_pool_config:
+        personal_node01:
+          size: 2
+          node_kube_version: v1.25.4
+          shape: VM.Standard.A1.Flex
+          mem_gbs: 12
+          ocpus: 2
+          ssh_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDNKf4MOeWT+XB6WqapzdbV6gA+XG5Djlj2HaUWt+pZXSLwn9r4izj69Ihu5XRyILdAPDFJy/2LYsx9YAl1srnnd9A6Bya/DTf1WmQUAjvnmprmHNlAZXh7TTbk3yvgKnbMCWlEcpGN0vTf/gpLS+1B2POsPcL9SGWvnnN0e9QvVpIjDALesEkyKEVnvofYU0tOh5qifmQo5pkfKgVaIZbv69cgm7LjNzl7NifKC5oiXa9WLHKK/ntP/br/q8GPoWqU1BbAGQh1zbmLcxxjbtf+IJLzIXmJSa/YYGDIx8koh2v9QQGFsHvL/XJJZQD7ks8+On4wZsM8iVgCyvfd7CYz3XyyqQyqFqpXUpPQsGyK+IZ9j9r/TLwL3r0Ir3qaGWay0W58kMZEaoF+Cs4Bq0IfUWumpU6xwCqKJdG+/GvuEBJ8hLXZyDgWJ4cAqwCfyLe2a2XUUax7cG1ltLTgrKBN4Fn8AvtXBxDABHCbsweFcBFYmoOs4WPYCZ7l2x/ZLzIwHc6S1tpNGUmDyldnuHAEo1CGF1DZWHV21slS2tfau7pZPCsyq/EPRIzBt4mMYng755lE+198YFsHDbFX8YePUIv0ABLyuxkwco5qK9ZETHLt9DrzMWZua2/RZDD6pZdup20PdcNN3F6pIDJKNvd4FdAKwT0XFno/ean5HHdz8w=="
