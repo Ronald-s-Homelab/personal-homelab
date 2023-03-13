@@ -1,0 +1,25 @@
+cert-manager:
+  installCRDs: true
+  replicaCount: 1
+  nodeSelector:
+    kubernetes.io/os: linux
+  image:
+    repository: quay.io/jetstack/cert-manager-controller
+  cainjector:
+    replicaCount: 1
+    image:
+      repository: quay.io/jetstack/cert-manager-cainjector
+    nodeSelector:
+      kubernetes.io/os: linux
+  webhook:
+    replicaCount: 1
+    image:
+      repository: quay.io/jetstack/cert-manager-webhook
+    nodeSelector:
+      kubernetes.io/os: linux
+  global:
+    leaderElection:
+      namespace: "cert-manager"
+      leaseDuration: 30s
+      renewDeadline: 25s
+      retryPeriod: 15s
