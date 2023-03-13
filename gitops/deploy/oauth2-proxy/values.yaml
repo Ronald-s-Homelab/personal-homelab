@@ -1,0 +1,77 @@
+config:
+  annotations: {}
+  cookieName: ""
+  configFile: false
+  existingSecret: &oauth2-proxy-secret-name oauth2-proxy-secret
+
+alphaConfig:
+  enabled: false
+
+extraArgs:
+  upstream: "file:///dev/null"
+  provider: github
+  scope: user:email
+  github-team: devops
+  github-org: Ronald-s-Homelab
+  email-domain: "*"
+  silence-ping-logging: true
+  whitelist-domain: .ronaldmiranda.com.br
+
+image:
+  repository: "quay.io/oauth2-proxy/oauth2-proxy"
+  tag: "v7.3.0"
+  pullPolicy: "Always"
+
+service:
+  type: ClusterIP
+  portNumber: 80
+  annotations: {}
+
+ingress:
+  enabled: true
+  className: nginx
+  path: /
+  # Only used if API capabilities (networking.k8s.io/v1) allow it
+  pathType: Prefix
+  hosts:
+    - oauth.ronaldmiranda.com.br
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  tls:
+    - secretName: ronaldmiranda-tls
+      hosts:
+        - oauth.ronaldmiranda.com.br
+
+proxyVarsAsSecrets: true
+httpScheme: http
+
+# Configure the session storage type, between cookie and redis
+sessionStorage:
+  # Can be one of the supported session storage cookie/redis
+  type: cookie
+
+# Enables apiVersion deprecation checks
+checkDeprecation: true
+
+# Extra K8s manifests to deploy
+extraObjects:
+  - apiVersion: external-secrets.io/v1alpha1
+    kind: ExternalSecret
+    metadata:
+      name: oauth2-proxy-es
+    spec:
+      dataFrom:
+        - key: OAUTH2_PROXY_GH
+      refreshInterval: 1h
+      secretStoreRef:
+        kind: ClusterSecretStore
+        name: doppler-css
+      target:
+        creationPolicy: Owner
+        name: *oauth2-proxy-secret-name
+        template:
+          engineVersion: v2
+          data:
+            client-id: "{{`{{ .github_oauth2_client_id }}`}}"
+            client-secret: "{{`{{ .github_oauth2_client_secret }}`}}"
+            cookie-secret: "{{`{{ .oauth2_cookie_secret }}`}}"

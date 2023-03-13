@@ -1,0 +1,7 @@
+version: 6.2.7
+repo_name: oauth2-proxy
+chart_name: oauth2-proxy
+release_name: oauth2-proxy
+chart_repo: https://oauth2-proxy.github.io/manifests
+namespace: oauth2-proxy-system
+value_files: "-f values.yaml"
