@@ -1,0 +1,12 @@
+replicaCount: 1
+installCRDs: true
+leaderElect: true
+resources:
+  requests:
+    cpu: 100m
+    memory: 320Mi
+  limits:
+    cpu: 100m
+    memory: 320Mi
+podLabels:
+  app: external-secrets

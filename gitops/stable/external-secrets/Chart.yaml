@@ -1,0 +1,13 @@
+apiVersion: v2
+name: external-secrets
+version: 0.7.2
+appVersion: 0.7.2
+
+dependencies:
+  - name: external-secrets
+    version: "0.7.2"
+    repository: "https://charts.external-secrets.io"
+
+maintainers:
+  - name: Ronald-s-Homelab
+    url: https://github.com/Ronald-s-Homelab
