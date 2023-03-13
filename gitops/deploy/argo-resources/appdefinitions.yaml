@@ -118,23 +118,6 @@ appDefinitions:
       automated:
         prune: true
 
-  teleport-application:
-    namespace: argocd-system
-    project: default
-    source:
-      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-      targetRevision: main
-      path: gitops/stable/teleport-agent
-      helm:
-        releaseName: teleport-agent
-    destination:
-      namespace: teleport-system
-    syncPolicy:
-      automated:
-        prune: true
-      syncOptions:
-        - CreateNamespace=true
-
   cert-manager:
     namespace: argocd-system
     project: default
@@ -368,23 +351,6 @@ appDefinitions:
             app: external-secrets
     destination:
       namespace: external-secrets-system
-    syncPolicy:
-      automated:
-        prune: true
-      syncOptions:
-        - CreateNamespace=true
-
-  teleport-server-app:
-    namespace: argocd-system
-    project: default
-    source:
-      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-      targetRevision: main
-      path: gitops/stable/teleport
-      helm:
-        releaseName: teleport-cluster
-    destination:
-      namespace: teleport-system
     syncPolicy:
       automated:
         prune: true
