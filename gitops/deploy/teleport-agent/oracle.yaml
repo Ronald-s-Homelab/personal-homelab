@@ -1,0 +1,5 @@
+teleport-kube-agent:
+  proxyAddr: "teleport.ronaldmiranda.com.br:443"
+  kubeClusterName: cluster-oracle
+  secretName: teleport-secret
+  image: ronaldmiranda/teleport-arm
