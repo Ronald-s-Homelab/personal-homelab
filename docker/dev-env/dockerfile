@@ -23,7 +23,7 @@ COPY etc/bashrc /etc/rc/bashrc
 COPY etc/zshrc /etc/rc/zshrc
 COPY etc/p10k /etc/rc/p10k
 COPY etc/init /etc/init
-COPY ssh/config_${arch} /etc/rc/.ssh/config
+COPY --chown=$user ssh/config_${arch} /etc/rc/.ssh/config
 
 RUN rm -f /home/$user/.bashrc /home/$user/.zshrc /home/$user/.p10k.zsh \
   && ln -s /etc/rc/bashrc /home/$user/.bashrc \

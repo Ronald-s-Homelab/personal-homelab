@@ -70,7 +70,6 @@ run(){
     '-it'
     '-v dev-env-pessoal:/home/'$USER''
     '-v '$HOME':/dojo/identity'
-    '-v '$HOME'/.config:/home/'$USER'/.config'
     '--net host'
   )
 
@@ -82,9 +81,11 @@ run(){
     )
     socat TCP-LISTEN:12345,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock &
   elif [[ "$(uname)" = "Linux" ]]; then
-    args+=('
-      -v '$(realpath /etc/localtime)':/etc/localtime:ro'
+    args+=(
+      '-v '$(realpath /etc/localtime)':/etc/localtime:ro'
       '-v '$HOME'/.1password:/home/ronald/.1password'
+      '-v /tmp/.X11-unix:/tmp/.X11-unix'
+      '-e DISPLAY='$DISPLAY''
     )
   fi
   docker run ${args[*]} local:1000
