@@ -45,6 +45,10 @@ image:
 ingress:
   enabled: true
   ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/auth-signin: https://oauth.ronaldmiranda.com.br/oauth2/start?rd=$escaped_request_uri
+    nginx.ingress.kubernetes.io/auth-url: http://oauth2-proxy.oauth2-proxy-system.svc.cluster.local/oauth2/auth
   hosts:
     - host: atlantis.ronaldmiranda.com.br
       paths:
@@ -53,8 +57,6 @@ ingress:
     - secretName: ronaldmiranda-tls
       hosts:
         - atlantis.ronaldmiranda.com.br
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 
 service:
   type: ClusterIP
@@ -66,18 +68,19 @@ repoConfig: |
       allowed_overrides: [apply_requirements, workflow, delete_source_branch_on_merge]
       apply_requirements: [mergeable, undiverged, approved]
       delete_source_branch_on_merge: true
-      workflow: default
+      workflow: dummy
 
     - id: /.*(\/atlantis-test)$/
       branch: /^(?i)(develop|lc[a-zA-Z]{1,3}-(\d+))$/
       pre_workflow_hooks:
-        - run: >-
+        - run: '
             terragrunt-atlantis-config generate
               --output atlantis.yaml
               --parallel
               --apply-requirements approved,mergeable,undiverged
               --create-project-name
               --workflow dummy
+            '
         - run: yq -i '.projects = (.projects | map(select(.workflow == "terragrunt_nonprd")))' atlantis.yaml
 
   workflows:
