@@ -4,8 +4,8 @@ set -euo pipefail
 
 COMMAND=${1:-"run"}
 
-DOCKER_REPOSITORY="ronaldmiranda/dev-env"
-DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202204111109-9a8384c"}
+DOCKER_REPOSITORY="gcr.io/ronaldmiranda/dev-env"
+DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303182217-6395d84"}
 DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202302092212-6e14ccc"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
