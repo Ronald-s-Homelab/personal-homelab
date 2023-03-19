@@ -4,52 +4,65 @@ set -euo pipefail
 
 ALWAYS_UPDATE="${ALWAYS_UPDATE:-true}"
 
-gcloud auth login --no-browser && gcloud config set project ronaldmiranda
-
-dlogin(){
+dlogin() {
   TEMP_DIR=$(mktemp -d)
-  echo "op://cli/dockerhub/token/password" > ${TEMP_DIR}/file.tpl
+  echo "op://cli/dockerhub/token/password" >${TEMP_DIR}/file.tpl
   op inject -i ${TEMP_DIR}/file.tpl -o ${TEMP_DIR}/dockerhub_token
-  cat ${TEMP_DIR}/dockerhub_token | docker login -u $1 --password-stdin
+  cat ${TEMP_DIR}/dockerhub_token | sudo docker login -u $1 --password-stdin
   rm -rf $TEMP_DIR
   unset TEMP_DIR
 }
 
-socat(){
+socat() {
   socat UNIX-LISTEN:/mnt/sock/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345 &
 }
 
-if [ ! -d ~/.secrets ]; then
-  mkdir -p ~/.secrets
-  if [ $ALWAYS_UPDATE ]; then
-    echo "recovering secrets from secrets-manager"
-    for sa in $(gcloud secrets list --format="value(name)");
-      do
-        echo "feching $sa secret."
-        if [ "$sa" == "private-gpg" ]; then
-          gcloud secrets versions access latest --secret $sa | base64 -d > ~/.secrets/$sa
-        else
-          gcloud secrets versions access latest --secret $sa > ~/.secrets/$sa
-        fi
-      done
-  fi
+# getGcpSecrets() {
+#   if [ ! -d ~/.secrets ]; then
+#     mkdir -p ~/.secrets
+#     if [ $ALWAYS_UPDATE ]; then
+#       echo "recovering secrets from secrets-manager"
+#       for sa in $(gcloud secrets list --format="value(name)"); do
+#         echo "feching $sa secret."
+#         if [ "$sa" == "private-gpg" ]; then
+#           gcloud secrets versions access latest --secret $sa | base64 -d >~/.secrets/$sa
+#         else
+#           gcloud secrets versions access latest --secret $sa >~/.secrets/$sa
+#         fi
+#       done
+#     fi
+#   fi
+# }
+
+# echo "ĺogging in to docker registry"
+# cat ~/.secrets/registry-pusher-sa | sudo docker login -u _json_key --password-stdin https://gcr.io
+
+echo "[GOOGLE]: Running google things."
+if [[ $(gcloud config get-value account) == "r@ronaldmiranda.com.br" ]]; then
+  echo "[GOOGLE] already logged in"
+else
+  gcloud auth login && gcloud config set project ronaldmiranda
+  # getGcpSecrets
 fi
 
-echo "ĺogging in to docker registry"
-cat ~/.secrets/registry-pusher-sa | docker login -u _json_key --password-stdin https://gcr.io
-dlogin ronaldmiranda
+if [[ $(op account get) ]]; then
+  echo "[1Password] working"
+  dlogin ronaldmiranda
+else
+  echo "[1Password]: You must login using eval \$(op signin)"
+fi
 
-
-echo "configure gpg key"
-gpg --import ~/.secrets/private-gpg
-
-
-if [ "$(git config --get commit.gpgsign)" == "" ]; then
-  echo "configure commit signature key"
-  git config --global user.signingkey E0F9E32203A26F69
-  git config --global commit.gpgsign true
+if [ "$(git config --get user.signingkey)" == "" ]; then
   git config --global user.name ronaldmiranda
   git config --global user.email r@ronaldmiranda.com.br
+  git config --global user.signingkey "$(op item get --vault private ronald_pessoal --fields publickey)"
+  git config --global gpg.format ssh
+  git config --global gpg.ssh.program op-ssh-sign
+  git config --global commit.gpgsign true
+  else
+    echo "[GPGSIGN]: already configured"
 fi
 
-socat
+if [[ ! $(uname -r | grep microsoft) ]]; then
+  socat
+fi

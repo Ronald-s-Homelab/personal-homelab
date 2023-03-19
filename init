@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+CMD=${1:-"ext"}
+
+case $CMD in
+  local)
+    source docker/dev-env/run-local.sh;;
+  ext)
+    source docker/dev-env/run.sh;;
+esac

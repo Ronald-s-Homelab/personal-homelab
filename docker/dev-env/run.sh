@@ -10,6 +10,7 @@ DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202302092212-6e14ccc"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
 CONTAINER_NAME='devenv-personal'
+DEVENV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ZSH_CONFIGURE=${ZSH_CONFIGURE:-"n"}
 
 _checkCPUPlatform() {
@@ -32,11 +33,11 @@ _checkCPUPlatform() {
 build(){
   if [[ $(uname -m) == 'aarch64' ]] || [[ $(uname -m) == 'arm64' ]]; then
     docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG \
-      -f dockerfile.arm.base \
-      $( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+      -f $DEVENV_DIR/dockerfile.arm.base \
+      $DEVENV_DIR
   else
-    docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG -f dockerfile.base \
-      $( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+    docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG -f $DEVENV_DIR/dockerfile.base \
+      $DEVENV_DIR
   fi
 }
 
@@ -53,14 +54,14 @@ run(){
     GRP_CMD='groupadd -g $gid $user && useradd -ms /bin/zsh -d /home/$user -u $uid -g $gid $user'
   fi
 
-  docker build -t local:1000 -f dockerfile \
+  docker build -t local:1000 -f $DEVENV_DIR/dockerfile \
     --build-arg groupcmd="$GRP_CMD" \
     --build-arg image=$DOCKER_IMAGE \
     --build-arg user=$USER \
     --build-arg arch=$ARCH \
     --build-arg uid=$(id -u) \
     --build-arg gid=$(id -g) \
-    $( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+    $DEVENV_DIR
 
   declare -a args=(
     '--name '$CONTAINER_NAME''
@@ -71,6 +72,7 @@ run(){
     '-v dev-env-pessoal:/home/'$USER''
     '-v '$HOME':/dojo/identity'
     '--net host'
+    '--privileged'
   )
 
   if [[ "$(uname)" = "Darwin" ]]; then
@@ -82,6 +84,7 @@ run(){
     socat TCP-LISTEN:12345,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock &
   elif [[ "$(uname)" = "Linux" ]]; then
     args+=(
+      '-v /var/run/docker.sock:/var/run/docker.sock'
       '-v '$(realpath /etc/localtime)':/etc/localtime:ro'
       '-v '$HOME'/.1password:/home/ronald/.1password'
       '-v /tmp/.X11-unix:/tmp/.X11-unix'

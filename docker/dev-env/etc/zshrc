@@ -55,16 +55,6 @@ function zsh_configured() {
       * )
         echo "Please answer [yY] or [nN].";;
     esac
-    echo -n "Do you wish to use your kubeconfig file from your local machine? [y/n]: "
-    read kubeyn
-    case $kubeyn in
-      [yY]* )
-        export KUBECONFIG=/home/$USR/.kube/config
-        ;;
-      [nN]* );;
-      * )
-        echo "Please answer [yY] or [nN].";;
-    esac
     break
   done
   touch .zsh_configured
@@ -91,7 +81,6 @@ fi
 
 source /bin/google-cloud-sdk/completion.zsh.inc
 source /bin/google-cloud-sdk/path.zsh.inc
-source /etc/profile.d/k3d
 source /etc/profile.d/kubectl.zsh.inc
 source $ZSH/oh-my-zsh.sh
 
