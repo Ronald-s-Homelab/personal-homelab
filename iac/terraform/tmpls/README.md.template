@@ -1,0 +1,27 @@
+<h1 align="center">
+  <img alt="SouJunior Logo" src="https://user-images.githubusercontent.com/34722707/212139037-f0f862b6-4370-48b1-bdf5-84704e9f01cb.png" width="120px" />
+</h1>
+
+#### Repositório que contém a lista de projetos ativos no servidor no Discord do [SouJunior Lab](https://discord.gg/soujunior-community-759176734460346423).
+
+<hr/>
+
+## Lista de Projetos Ativos
+%{~ for k,v in projects }
+-  <a href="#${k}">${v.name}</a>
+%{~ endfor ~}
+
+<hr/>
+
+%{~ for k,v in projects }
+
+## ${title(replace("${k}", "-", " "))}
+**Repositório**:  <a href="${v.repo}">${v.completeName}</a> <br>
+**Responsável**: <a href="${v.responsible.link}">${v.responsible.name}</a> <br>
+**Descrição do projeto**: ${v.description} <br><br>
+**Equipe**:
+%{~ for kk,vv in v.equipe }
+  - ${title(kk)}: %{for k,v in vv} ${format("<a href=\"%s\">%s</a>", v.link, v.name)} %{endfor} <br>
+%{~ endfor ~}
+%{ endfor }
+<hr/>

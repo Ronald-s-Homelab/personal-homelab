@@ -1,0 +1,15 @@
+projects: []
+  # 01-wizer:
+  #  name: Wizer
+  #  completeName: Wizer Community
+  #  repo: https://github.com/Wizer-Community
+  #  responsible:
+  #     name: Simeone Johnson
+  #     link: https://www.linkedin.com/in/simeone-johnson/
+  #  description: >-
+  #   Somos uma plataforma de Streaming Educacional, com conteúdo de qualidade disponibilizado de forma gratuita.
+  #   Unimos educação e tecnologia, para transformar a forma de aprendizagem, tornando simples e acessível a todos que querem aprender.
+  #  equipe:
+  #   frontend:
+  #     - name: "André Luiz"
+  #       link: "https://www.linkedin.com/in/andrelcnunes/"

@@ -16,9 +16,10 @@ module "discord_server" {
 module "github" {
   source = "../modules/github"
 
-  org_name     = local.inputs.github.org_name
-  repositories = local.inputs.github.repositories
-  teams        = local.inputs.github.teams
+  org_name       = local.inputs.github.org_name
+  repositories   = local.inputs.github.repositories
+  teams          = local.inputs.github.teams
+  privkey_gh_app = var.GH_APP_PRIVKEY
 }
 
 output "invites" {

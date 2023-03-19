@@ -8,3 +8,7 @@ locals {
 variable "DISCORD_BOT_TOKEN" {
   type = string
 }
+
+variable "GH_APP_PRIVKEY" {
+  type = string
+}

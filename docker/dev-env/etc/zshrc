@@ -40,7 +40,7 @@ export TF_VAR_ssh_public='op://private/ronald_pessoal/public'
 # ronald-s-homelab github app
 export GITHUB_APP_ID='op://cli/github-app-terraform/appid'
 export GITHUB_APP_INSTALLATION_ID='op://cli/github-app-terraform/installationId'
-export GITHUB_APP_PEM_FILE='op://cli/github-app-terraform/chaveprivada'
+export TF_VAR_GH_APP_PRIVKEY='op://cli/github-app-terraform/chaveprivada'
 
 function zsh_configured() {
   while true; do
