@@ -6,31 +6,35 @@ COMMAND=${1:-"run"}
 
 DOCKER_REPOSITORY="gcr.io/ronaldmiranda/dev-env"
 DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303182217-6395d84"}
-DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202302092212-6e14ccc"}
+DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202303182234-f9f7a4b"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
 CONTAINER_NAME='devenv-personal'
-DEVENV_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DEVENV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ZSH_CONFIGURE=${ZSH_CONFIGURE:-"n"}
 
 _checkCPUPlatform() {
   case $(uname -m) in
-    aarch64)
-      DOCKER_IMAGE=$DOCKER_ARM_IMAGE
-      ARCH='arm64';;
-    arm64)
-      DOCKER_IMAGE=$DOCKER_ARM_IMAGE
-      ARCH='arm64';;
-    x86_64)
-      DOCKER_IMAGE=$DOCKER_IMAGE
-      ARCH='amd64';;
-    amd64)
-      DOCKER_IMAGE=$DOCKER_IMAGE
-      ARCH='amd64';;
+  aarch64)
+    DOCKER_IMAGE=$DOCKER_ARM_IMAGE
+    ARCH='arm64'
+    ;;
+  arm64)
+    DOCKER_IMAGE=$DOCKER_ARM_IMAGE
+    ARCH='arm64'
+    ;;
+  x86_64)
+    DOCKER_IMAGE=$DOCKER_IMAGE
+    ARCH='amd64'
+    ;;
+  amd64)
+    DOCKER_IMAGE=$DOCKER_IMAGE
+    ARCH='amd64'
+    ;;
   esac
 }
 
-build(){
+build() {
   if [[ $(uname -m) == 'aarch64' ]] || [[ $(uname -m) == 'arm64' ]]; then
     docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG \
       -f $DEVENV_DIR/dockerfile.arm.base \
@@ -41,11 +45,11 @@ build(){
   fi
 }
 
-push(){
+push() {
   docker push $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG
 }
 
-run(){
+run() {
   _checkCPUPlatform
 
   if [[ $(uname) == "Darwin" ]]; then
@@ -77,9 +81,9 @@ run(){
 
   if [[ "$(uname)" = "Darwin" ]]; then
     args+=(
-      '-e SSH_AUTH_SOCK=/mnt/sock/agent.sock'
       '-u '$(id -u $USER):$(id -g $USER)''
       '-e TZ='$(ls -la /etc/localtime | cut -d/ -f8-9)''
+      '-v /var/run/docker.sock:/var/run/docker.sock'
     )
     socat TCP-LISTEN:12345,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock &
   elif [[ "$(uname)" = "Linux" ]]; then
@@ -95,16 +99,21 @@ run(){
 }
 
 case $COMMAND in
-  build)
-    build;;
-  push)
-    push;;
-  build-push)
-    build
-    push;;
-  build-run)
-    build
-    run;;
-  run)
-    run;;
+build)
+  build
+  ;;
+push)
+  push
+  ;;
+build-push)
+  build
+  push
+  ;;
+build-run)
+  build
+  run
+  ;;
+run)
+  run
+  ;;
 esac

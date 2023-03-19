@@ -14,7 +14,10 @@ dlogin() {
 }
 
 socat() {
-  socat UNIX-LISTEN:/mnt/sock/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345 &
+  if [ -d ~/.1password/ ]; then
+    mkdir ~/.1password
+  fi
+  socat UNIX-LISTEN:$HOME/.1password/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345 &
 }
 
 # getGcpSecrets() {
@@ -59,8 +62,8 @@ if [ "$(git config --get user.signingkey)" == "" ]; then
   git config --global gpg.format ssh
   git config --global gpg.ssh.program op-ssh-sign
   git config --global commit.gpgsign true
-  else
-    echo "[GPGSIGN]: already configured"
+else
+  echo "[GPGSIGN]: already configured"
 fi
 
 if [[ ! $(uname -r | grep microsoft) ]]; then

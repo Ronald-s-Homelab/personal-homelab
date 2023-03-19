@@ -217,6 +217,22 @@ RUN OP_VERSION='2.13.1' TEMP_DIR=$(mktemp -d) \
   && op --version \
   && rm -rf $TEMP_DIR
 
+RUN OP_SSH_VERSION="8.10.3" && TEMP_DIR=$(mktemp -d) \
+  && cd $TEMP_DIR \
+  && curl -o 1password.tar.gz -fsSLO https://downloads.1password.com/linux/tar/stable/x86_64/1password-${OP_SSH_VERSION}.x64.tar.gz \
+  && tar -zxvf 1password.tar.gz 1password-${OP_SSH_VERSION}.x64/op-ssh-sign \
+  && mv 1password-${OP_SSH_VERSION}.x64/op-ssh-sign /usr/local/bin/op-ssh-sign \
+  && rm -rf $TEMP_DIR
+
+RUN LG_VERSION='0.37.0' TEMP_DIR=$(mktemp -d) \
+  && cd $TEMP_DIR \
+  && curl -o lazygit.tar.gz -fsSLO \
+    "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_amd64.tar.gz" \
+  && tar -zxvf lazygit.tar.gz \
+  && mv lazygit /usr/local/bin/lazygit \
+  && rm -rf $TEMP_DIR \
+  && lazygit -h
+
 # lego
 RUN LEGO_VERSION='4.10.2' TEMP_DIR=$(mktemp -d) \
   && cd $TEMP_DIR \
