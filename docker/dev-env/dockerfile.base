@@ -227,7 +227,7 @@ RUN OP_SSH_VERSION="8.10.3" && TEMP_DIR=$(mktemp -d) \
 RUN LG_VERSION='0.37.0' TEMP_DIR=$(mktemp -d) \
   && cd $TEMP_DIR \
   && curl -o lazygit.tar.gz -fsSLO \
-    "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_amd64.tar.gz" \
+    "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_x86_64.tar.gz" \
   && tar -zxvf lazygit.tar.gz \
   && mv lazygit /usr/local/bin/lazygit \
   && rm -rf $TEMP_DIR \
