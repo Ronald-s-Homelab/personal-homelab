@@ -16,7 +16,7 @@ module "vcn" {
 
 module "compute" {
   for_each = local.inputs.compute.k8s
-  source   = "../../modules/oracle/compute"
+  source   = "../../modules/oracle/compute/k8s"
 
   name               = each.key
   compartment_id     = local.inputs.compartment_id
@@ -30,5 +30,18 @@ module "compute" {
   }
 
   node_pool_config = each.value.node_pool_config
+
+}
+
+module "vms" {
+  for_each = local.inputs.compute.vm
+  source   = "../../modules/oracle/compute/vm"
+
+  name           = each.key
+  compartment_id = local.inputs.compartment_id
+  shape          = each.value.shape
+  subnet_id      = module.vcn[each.value.vcn_name].subnet_ocid[each.value.subnet_name]
+  public         = each.value.public
+  ssh_public_key = each.value.ssh_public_key
 
 }
