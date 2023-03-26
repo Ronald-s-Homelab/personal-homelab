@@ -6,7 +6,6 @@ COMMAND=${1:-"run"}
 
 DOCKER_REPOSITORY="gcr.io/ronaldmiranda/dev-env"
 DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303190257-bbc0035"}
-DOCKER_ARM_IMAGE=${DOCKER_ARM_IMAGE:-"$DOCKER_REPOSITORY:202303190054-e6c362f"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
 CONTAINER_NAME='devenv-personal'
@@ -16,37 +15,28 @@ ZSH_CONFIGURE=${ZSH_CONFIGURE:-"n"}
 _checkCPUPlatform() {
   case $(uname -m) in
   aarch64)
-    DOCKER_IMAGE=$DOCKER_ARM_IMAGE
     ARCH='arm64'
     ;;
   arm64)
-    DOCKER_IMAGE=$DOCKER_ARM_IMAGE
     ARCH='arm64'
     ;;
   x86_64)
-    DOCKER_IMAGE=$DOCKER_IMAGE
     ARCH='amd64'
     ;;
   amd64)
-    DOCKER_IMAGE=$DOCKER_IMAGE
     ARCH='amd64'
     ;;
   esac
 }
 
 build() {
-  if [[ $(uname -m) == 'aarch64' ]] || [[ $(uname -m) == 'arm64' ]]; then
-    docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG \
-      -f $DEVENV_DIR/dockerfile.arm.base \
-      $DEVENV_DIR
-  else
     docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG -f $DEVENV_DIR/dockerfile.base \
       $DEVENV_DIR
-  fi
 }
 
 push() {
-  docker push $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG
+  docker buildx build --platform linux/arm64/v8,linux/amd64 \
+    --push -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG $DEVENV_DIR
 }
 
 run() {
@@ -65,6 +55,7 @@ run() {
     --build-arg arch=$ARCH \
     --build-arg uid=$(id -u) \
     --build-arg gid=$(id -g) \
+    --build-arg workdir=$(pwd) \
     $DEVENV_DIR
 
   declare -a args=(
@@ -72,6 +63,7 @@ run() {
     '--rm'
     '-e USR='$USER''
     '-e ZSH_CONFIGURE='$ZSH_CONFIGURE''
+    '-e HOST_PLATFORM='$(uname)''
     '-it'
     '-v dev-env-pessoal:/home/'$USER''
     '-v '$HOME':/dojo/identity'

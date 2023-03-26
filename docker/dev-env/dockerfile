@@ -7,12 +7,12 @@ ARG uid
 ARG gid
 ARG groupcmd
 ARG arch='amd64'
+ARG workdir
 
 RUN eval $groupcmd
 
 RUN echo "${user}    ALL=NOPASSWD: ALL" > /etc/sudoers
-RUN mkdir /mnt/sock
-RUN chown $uid:$gid /usr/local/bin /etc/profile.d/ /home/$user /mnt/sock
+RUN chown $uid:$gid /usr/local/bin /etc/profile.d/ /home/$user
 USER $user
 
 # Developer environment.
@@ -31,7 +31,7 @@ RUN rm -f /home/$user/.bashrc /home/$user/.zshrc /home/$user/.p10k.zsh \
   && mkdir -p /home/$user/.ssh && ln -s /etc/rc/.ssh/config /home/$user/.ssh/config
 
 # After the following line, changes to /root take no effect.
-WORKDIR /home/$user
+WORKDIR $workdir
 VOLUME /home/$user
 
 CMD ["/bin/zsh"]

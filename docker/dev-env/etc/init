@@ -59,7 +59,7 @@ else
   echo "[GPGSIGN]: already configured"
 fi
 
-if [[ ! $(uname -r | grep microsoft) ]]; then
+if [[ HOST_PLATFORM == 'Darwin' ]]; then
   if [ ! -d ~/.1password/ ]; then
     mkdir ~/.1password
   fi
