@@ -8,7 +8,7 @@ dlogin() {
   TEMP_DIR=$(mktemp -d)
   echo "op://cli/dockerhub/token/password" >${TEMP_DIR}/file.tpl
   op inject -i ${TEMP_DIR}/file.tpl -o ${TEMP_DIR}/dockerhub_token
-  cat ${TEMP_DIR}/dockerhub_token | sudo docker login -u $1 --password-stdin
+  cat ${TEMP_DIR}/dockerhub_token | docker login -u $1 --password-stdin
   rm -rf $TEMP_DIR
   unset TEMP_DIR
 }
@@ -41,13 +41,6 @@ else
   # getGcpSecrets
 fi
 
-if [[ $(op account get) ]]; then
-  echo "[1Password] working"
-  dlogin ronaldmiranda
-else
-  echo "[1Password]: You must login using eval \$(op signin)"
-fi
-
 if [ "$(git config --get user.signingkey)" == "" ]; then
   git config --global user.name ronaldmiranda
   git config --global user.email r@ronaldmiranda.com.br
@@ -59,10 +52,29 @@ else
   echo "[GPGSIGN]: already configured"
 fi
 
-if [[ HOST_PLATFORM == 'Darwin' ]]; then
+if [[ $HOST_PLATFORM == 'Darwin' ]]; then
   if [ ! -d ~/.1password/ ]; then
-    mkdir ~/.1password
+      echo "creating .1password folder"
+      mkdir ~/.1password
+    else
+      if [ -e ~/.1password/agent.sock ]; then
+        echo "removing existent old socket"
+        rm ~/.1password/agent.sock
+      fi
   fi
-  rm ~/.1password/agent.sock && \
+
+  if [ -e ~/docker.sock ]; then
+    echo "removing existent old docker socket"
+    rm $HOME/docker.sock
+  fi
+
   socat UNIX-LISTEN:$HOME/.1password/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345 &
+  socat UNIX-LISTEN:$HOME/docker.sock,reuseaddr,fork TCP:192.168.205.1:12346 &
+fi
+
+if [[ $(op account get) ]]; then
+  echo "[1Password] working"
+  dlogin ronaldmiranda
+else
+  echo "[1Password]: You must login using eval \$(op signin)"
 fi

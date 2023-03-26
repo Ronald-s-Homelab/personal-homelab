@@ -5,7 +5,7 @@ set -euo pipefail
 COMMAND=${1:-"run"}
 
 DOCKER_REPOSITORY="gcr.io/ronaldmiranda/dev-env"
-DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303190257-bbc0035"}
+DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303260345-7d26673"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
 CONTAINER_NAME='devenv-personal'
@@ -42,10 +42,14 @@ push() {
 run() {
   _checkCPUPlatform
 
-  if [[ $(uname) == "Darwin" ]]; then
-    GRP_CMD='useradd -ms /bin/zsh -d /home/$user -u $uid -g $gid $user'
+  SYSTEM=$(uname)
+
+  if [[ $SYSTEM == "Darwin" ]]; then
+    GRP_CMD='adduser -s /bin/zsh -h /home/$user --disabled-password -u $uid $user'
+    WORK_DIR="/home/$USER"
   else
     GRP_CMD='groupadd -g $gid $user && useradd -ms /bin/zsh -d /home/$user -u $uid -g $gid $user'
+    WORK_DIR="$(pwd)"
   fi
 
   docker build -t local:1000 -f $DEVENV_DIR/dockerfile \
@@ -55,7 +59,7 @@ run() {
     --build-arg arch=$ARCH \
     --build-arg uid=$(id -u) \
     --build-arg gid=$(id -g) \
-    --build-arg workdir=$(pwd) \
+    --build-arg workdir=$WORK_DIR \
     $DEVENV_DIR
 
   declare -a args=(
@@ -63,7 +67,7 @@ run() {
     '--rm'
     '-e USR='$USER''
     '-e ZSH_CONFIGURE='$ZSH_CONFIGURE''
-    '-e HOST_PLATFORM='$(uname)''
+    '-e HOST_PLATFORM='$SYSTEM''
     '-it'
     '-v dev-env-pessoal:/home/'$USER''
     '-v '$HOME':/dojo/identity'
@@ -71,14 +75,15 @@ run() {
     '--privileged'
   )
 
-  if [[ "$(uname)" = "Darwin" ]]; then
+  if [[ "$SYSTEM" = "Darwin" ]]; then
     args+=(
       '-u '$(id -u $USER):$(id -g $USER)''
       '-e TZ='$(ls -la /etc/localtime | cut -d/ -f8-9)''
-      '-v /var/run/docker.sock:/var/run/docker.sock'
+      # '-v /var/run/docker.sock:/var/run/docker.sock'
     )
+    socat TCP-LISTEN:12346,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:$HOME/.rd/docker.sock &
     socat TCP-LISTEN:12345,reuseaddr,fork,bind=192.168.205.1 UNIX-CLIENT:$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock &
-  elif [[ "$(uname)" = "Linux" ]]; then
+  elif [[ "$SYSTEM" = "Linux" ]]; then
     args+=(
       '-v /var/run/docker.sock:/var/run/docker.sock'
       '-v '$(realpath /etc/localtime)':/etc/localtime:ro'
