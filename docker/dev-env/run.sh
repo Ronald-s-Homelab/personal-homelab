@@ -45,7 +45,7 @@ run() {
   SYSTEM=$(uname)
 
   if [[ $SYSTEM == "Darwin" ]]; then
-    GRP_CMD='adduser -s /bin/zsh -h /home/$user --disabled-password -u $uid $user'
+    GRP_CMD='useradd -ms /bin/zsh -d /home/$user -u $uid -g $gid $user'
     WORK_DIR="/home/$USER"
   else
     GRP_CMD='groupadd -g $gid $user && useradd -ms /bin/zsh -d /home/$user -u $uid -g $gid $user'
@@ -100,10 +100,6 @@ build)
   build
   ;;
 push)
-  push
-  ;;
-build-push)
-  build
   push
   ;;
 build-run)
