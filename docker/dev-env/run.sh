@@ -12,23 +12,6 @@ CONTAINER_NAME='devenv-personal'
 DEVENV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ZSH_CONFIGURE=${ZSH_CONFIGURE:-"n"}
 
-_checkCPUPlatform() {
-  case $(uname -m) in
-  aarch64)
-    ARCH='arm64'
-    ;;
-  arm64)
-    ARCH='arm64'
-    ;;
-  x86_64)
-    ARCH='amd64'
-    ;;
-  amd64)
-    ARCH='amd64'
-    ;;
-  esac
-}
-
 build() {
     docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG -f $DEVENV_DIR/dockerfile.base \
       $DEVENV_DIR
@@ -40,8 +23,6 @@ push() {
 }
 
 run() {
-  _checkCPUPlatform
-
   SYSTEM=$(uname)
 
   if [[ $SYSTEM == "Darwin" ]]; then
@@ -56,7 +37,6 @@ run() {
     --build-arg groupcmd="$GRP_CMD" \
     --build-arg image=$DOCKER_IMAGE \
     --build-arg user=$USER \
-    --build-arg arch=$ARCH \
     --build-arg uid=$(id -u) \
     --build-arg gid=$(id -g) \
     --build-arg workdir=$WORK_DIR \

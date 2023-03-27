@@ -6,7 +6,6 @@ ARG user
 ARG uid
 ARG gid
 ARG groupcmd
-ARG arch='amd64'
 ARG workdir
 
 RUN eval $groupcmd
