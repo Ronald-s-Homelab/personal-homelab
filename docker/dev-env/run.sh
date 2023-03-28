@@ -5,7 +5,7 @@ set -euo pipefail
 COMMAND=${1:-"run"}
 
 DOCKER_REPOSITORY="gcr.io/ronaldmiranda/dev-env"
-DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303260345-7d26673"}
+DOCKER_IMAGE=${DOCKER_IMAGE:-"$DOCKER_REPOSITORY:202303280211-137e646"}
 BUILD_DOCKER_TAG=$(git log -n 1 --pretty='format:%cd-%h' --date=format:'%Y%m%d%H%M')
 
 CONTAINER_NAME='devenv-personal'
