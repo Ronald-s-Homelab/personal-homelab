@@ -70,6 +70,8 @@ if [[ $HOST_PLATFORM == 'Darwin' ]]; then
 
   socat UNIX-LISTEN:$HOME/.1password/agent.sock,reuseaddr,fork TCP:192.168.205.1:12345 &
   socat UNIX-LISTEN:$HOME/docker.sock,reuseaddr,fork TCP:192.168.205.1:12346 &
+  else
+    sudo socat UNIX-LISTEN:$HOME/docker.sock,mode=777,reuseaddr,fork UNIX-CLIENT:/var/run/docker.sock &
 fi
 
 if [[ $(op account get) ]]; then

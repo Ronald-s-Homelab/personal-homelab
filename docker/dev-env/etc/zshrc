@@ -89,7 +89,7 @@ alias tf='op run -- terraform'
 alias tg='op run -- terragrunt'
 alias lego='op run -- lego'
 
-[[ ! $HOST_PLATFORM == 'Darwin' ]] || export DOCKER_HOST=unix://$HOME/docker.sock
+export DOCKER_HOST=unix://$HOME/docker.sock
 
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
