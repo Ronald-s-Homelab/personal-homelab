@@ -13,12 +13,12 @@ DEVENV_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ZSH_CONFIGURE=${ZSH_CONFIGURE:-"n"}
 
 build() {
-    docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG -f $DEVENV_DIR/dockerfile.base \
-      $DEVENV_DIR
+  docker build -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG -f $DEVENV_DIR/dockerfile.base \
+    $DEVENV_DIR
 }
 
 push() {
-  docker buildx build --platform linux/arm64/v8,linux/amd64 \
+  docker buildx build --platform linux/arm64/v8,linux/amd64 -f $DEVENV_DIR/dockerfile.base \
     --push -t $DOCKER_REPOSITORY:$BUILD_DOCKER_TAG $DEVENV_DIR
 }
 
