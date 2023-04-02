@@ -1,28 +1,24 @@
-FROM ubuntu:22.04
+FROM ubuntu:jammy-20230308
 
 LABEL maintainer=ronald
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV TZ='America/Recife'
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-      apt-get update && apt-get install sudo -y \
-      && DEBIAN_FRONTEND="noninteractive" sudo apt-get -y install tzdata
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
+      apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-  sudo apt-get update \
-  && DEBIAN_FRONTEND="noninteractive" sudo  apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
+    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+    sudo \
     apt-transport-https \
     bash-completion \
     ca-certificates \
-    conntrack \
     curl \
-    dnsutils \
     git \
-    gnupg \
-    gnupg2 \
     htop \
     iproute2 \
     iptables \
@@ -32,7 +28,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     netcat \
     socat \
     ssh \
-    sshfs \
     telnet \
     tmux \
     tree \
@@ -40,8 +35,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     vim \
     zsh \
     fzf \
-    python3 python3-pip \
-  && rm -rf /var/lib/apt/lists/*
+    python3 python3-pip
 
 # ZSH
 
@@ -70,36 +64,25 @@ RUN git clone --depth=1 \
 # GCloud.
 
 RUN GCLOUD_VERSION="421.0.0" \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm" ; fi \
   && curl -o google-cloud-sdk.tar.gz -fsSL \
-  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-x86_64.tar.gz" \
+  "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${GCLOUD_VERSION}-linux-$ARCH.tar.gz" \
   && tar -xzvf google-cloud-sdk.tar.gz -C /bin \
   && /bin/google-cloud-sdk/install.sh -q \
   && rm -f google-cloud-sdk.tar.gz \
   && unset GCLOUD_VERSION
 
-# Azure cli.
-
-# RUN AZURE_CLI_VERSION="2.25*" \
-#   && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ buster main" \
-#   | tee /etc/apt/sources.list.d/azure-cli.list \
-#   && curl -L https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-#   && apt-get update \
-#   && apt-get install -y --no-install-recommends azure-cli="${AZURE_CLI_VERSION}" \
-#   && rm -rf /var/lib/apt/lists/* \
-#   && az -v \
-#   && unset AZURE_CLI_VERSION
-
 # Docker Client.
 
-RUN DOCKER_VERSION="20.10.6" \
+RUN DOCKER_VERSION="23.0.1" \
   && curl -fsSL "https://download.docker.com/linux/static/stable/$(uname -m)/docker-${DOCKER_VERSION}.tgz" \
   | tar --strip-components=1 -xz -C /usr/local/bin docker/docker \
   && docker -v \
   && unset DOCKER_VERSION
 
-RUN COMPOSE_VERSION="1.26.2" \
+RUN COMPOSE_VERSION="2.17.0" \
   && curl -fsSL -o /usr/local/bin/docker-compose \
-  "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
+  "https://github.com/docker/compose/releases/download/v${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" \
   && chmod +x /usr/local/bin/docker-compose \
   && docker-compose version \
   && unset COMPOSE_VERSION
@@ -107,18 +90,20 @@ RUN COMPOSE_VERSION="1.26.2" \
 # Terraform.
 
 RUN TERRAFORM_VERSION="1.4.2" \
-  && curl -o terraform_linux_amd64.zip -fsSL \
-  "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" \
-  && unzip terraform_linux_amd64.zip -d /bin \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
+  && curl -o terraform_linux.zip -fsSL \
+  "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_$ARCH.zip" \
+  && unzip terraform_linux.zip -d /bin \
   && terraform -v \
-  && rm -f terraform_linux_amd64.zip \
+  && rm -f terraform_linux.zip \
   && unset TERRAFORM_VERSION
 
 # yq
 
 RUN YQ_VERSION="4.31.2" \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && curl -o /usr/local/bin/yq -fsSL \
-  "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64" \
+  "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_$ARCH" \
   && chmod +x /usr/local/bin/yq \
   && yq -V \
   && unset YQ_VERSION
@@ -126,8 +111,9 @@ RUN YQ_VERSION="4.31.2" \
 # Terragrunt
 
 RUN TERRAGRUNT_VERSION="0.45.0" \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && curl -o /bin/terragrunt -fsSL \
-  "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_amd64" \
+  "https://github.com/gruntwork-io/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_linux_$ARCH" \
   && chmod +x /bin/terragrunt \
   && terragrunt -v \
   && unset TERRAGRUNT_VERSION
@@ -135,8 +121,9 @@ RUN TERRAGRUNT_VERSION="0.45.0" \
 # Kubectl
 
 RUN KUBECTL_VERSION="1.25.4" \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && curl -o /bin/kubectl -fsSL \
-  "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
+  "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/$ARCH/kubectl" \
   && chmod +x /bin/kubectl \
   && kubectl completion bash > /etc/profile.d/kubectl.bash.inc \
   && kubectl completion zsh > /etc/profile.d/kubectl.zsh.inc \
@@ -146,29 +133,32 @@ RUN KUBECTL_VERSION="1.25.4" \
 # Kubectx
 
 RUN KUBECTX_VERSION="0.9.4" \
-  && curl -o kubectx_linux_x86_64.tar.gz -fsSL \
-  "https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_x86_64.tar.gz" \
-  && tar -xzvf kubectx_linux_x86_64.tar.gz -C /bin \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
+  && curl -o kubectx_linux.tar.gz -fsSL \
+  "https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_$ARCH.tar.gz" \
+  && tar -xzvf kubectx_linux.tar.gz -C /bin \
   && kubectx -h \
-  && rm -f kubectx_linux_x86_64.tar.gz \
+  && rm -f kubectx_linux.tar.gz \
   && unset KUBECTX_VERSION
 
 # Kubens
 
 RUN KUBENS_VERSION="0.9.4" \
-  && curl -o kubens_linux_x86_64.tar.gz -fsSL \
-  "https://github.com/ahmetb/kubectx/releases/download/v${KUBENS_VERSION}/kubens_v${KUBENS_VERSION}_linux_x86_64.tar.gz" \
-  && tar -xzvf kubens_linux_x86_64.tar.gz -C /bin \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
+  && curl -o kubens_linux.tar.gz -fsSL \
+  "https://github.com/ahmetb/kubectx/releases/download/v${KUBENS_VERSION}/kubens_v${KUBENS_VERSION}_linux_$ARCH.tar.gz" \
+  && tar -xzvf kubens_linux.tar.gz -C /bin \
   && kubens -h \
-  && rm -f kubens_linux_x86_64.tar.gz \
+  && rm -f kubens_linux.tar.gz \
   && unset KUBENS_VERSION
 
 # k9s
 
 RUN K9S_VERSION="v0.27.3" \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && TEMP_DIR="$(mktemp -d)" \
   && curl -o k9s.tar.gz -fsSLO \
-  "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz" \
+  "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_$ARCH.tar.gz" \
   && tar -zxvf k9s.tar.gz -C "${TEMP_DIR}" \
   && mv ${TEMP_DIR}/k9s /usr/local/bin \
   && rm -rf k9s.tar.gz "${TEMP_DIR}" \
@@ -177,8 +167,9 @@ RUN K9S_VERSION="v0.27.3" \
 # Helm
 
 RUN HELM_VERSION="3.11.1" TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
-  && curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar -zxv linux-amd64/helm \
+  && curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-$ARCH.tar.gz" | tar -zxv linux-$ARCH/helm \
     | xargs -I % mv -- % /usr/local/bin/helm \
   && helm version \
   && unset HELM_VERSION && rm -rf $TEMP_DIR
@@ -186,69 +177,85 @@ RUN HELM_VERSION="3.11.1" TEMP_DIR=$(mktemp -d) \
 # Teleport
 
 RUN TELEPORT_VERSION="12.1.0" TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
-  && curl -O https://cdn.teleport.dev/teleport-v${TELEPORT_VERSION}-linux-amd64-bin.tar.gz \
-  && tar -xzf teleport-v${TELEPORT_VERSION}-linux-amd64-bin.tar.gz \
-    teleport/tbot \
-    teleport/tctl \
-    teleport/tsh \
-    teleport/teleport \
-  && mv teleport/* /usr/local/bin \
-  && tctl version \
+  && curl -SL https://cdn.teleport.dev/teleport-v${TELEPORT_VERSION}-linux-$ARCH-bin.tar.gz | tar -xz --strip-components=1 \
+  && mv tsh /usr/local/bin/ \
   && tsh version \
   && rm -rf $TEMP_DIR
 
 # ArgoCD
 
 RUN ARGO_VERSION='2.3.3' \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && curl -o /usr/local/bin/argocd -fsSL \
-  "https://github.com/argoproj/argo-cd/releases/download/v${ARGO_VERSION}/argocd-linux-amd64" \
+  "https://github.com/argoproj/argo-cd/releases/download/v${ARGO_VERSION}/argocd-linux-$ARCH" \
   && chmod +x /usr/local/bin/argocd \
   && argocd version --client
 
 # 1Password CLI
 
-RUN OP_VERSION='2.13.1' TEMP_DIR=$(mktemp -d) \
+RUN OP_VERSION='2.16.0' TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
-  && curl -fsSLO \
-    "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_amd64_v${OP_VERSION}.zip" \
-  && unzip op_linux_amd64_v${OP_VERSION}.zip \
+  && curl -o op.zip -fsSL \
+    "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_${ARCH}_v${OP_VERSION}.zip" \
+  && unzip op.zip \
   && mv op /usr/bin \
   && op --version \
   && rm -rf $TEMP_DIR
 
 RUN OP_SSH_VERSION="8.10.3" && TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="x64" ; fi \
   && cd $TEMP_DIR \
-  && curl -o 1password.tar.gz -fsSLO https://downloads.1password.com/linux/tar/stable/x86_64/1password-${OP_SSH_VERSION}.x64.tar.gz \
-  && tar -zxvf 1password.tar.gz 1password-${OP_SSH_VERSION}.x64/op-ssh-sign \
-  && mv 1password-${OP_SSH_VERSION}.x64/op-ssh-sign /usr/local/bin/op-ssh-sign \
+  && curl -SL https://downloads.1password.com/linux/tar/stable/$(uname -m)/1password-${OP_SSH_VERSION}.$ARCH.tar.gz \
+  | tar -zx --strip-components=1 \
+  && mv op-ssh-sign /usr/local/bin/op-ssh-sign \
   && rm -rf $TEMP_DIR
 
+# LazyGit
 RUN LG_VERSION='0.37.0' TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
   && cd $TEMP_DIR \
-  && curl -o lazygit.tar.gz -fsSLO \
-    "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_x86_64.tar.gz" \
-  && tar -zxvf lazygit.tar.gz \
+  && curl -SL \
+    "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_$ARCH.tar.gz" \
+  | tar -zx \
   && mv lazygit /usr/local/bin/lazygit \
   && rm -rf $TEMP_DIR \
   && lazygit -h
 
+# LazyDocker
+
+RUN LD_VERSION='0.20.0' TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
+  && cd $TEMP_DIR \
+  && curl -SL \
+    "https://github.com/jesseduffield/lazydocker/releases/download/v${LD_VERSION}/lazydocker_${LD_VERSION}_Linux_$ARCH.tar.gz" \
+  | tar -zx \
+  && mv lazydocker /usr/local/bin/lazydocker \
+  && rm -rf $TEMP_DIR \
+  && lazydocker -h
+
 # lego
 RUN LEGO_VERSION='4.10.2' TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
-  && curl -fsSLO \
-    "https://github.com/go-acme/lego/releases/download/v${LEGO_VERSION}/lego_v${LEGO_VERSION}_linux_amd64.tar.gz" \
-  && tar -zxvf lego_v${LEGO_VERSION}_linux_amd64.tar.gz \
+  && curl -SL \
+    "https://github.com/go-acme/lego/releases/download/v${LEGO_VERSION}/lego_v${LEGO_VERSION}_linux_$ARCH.tar.gz" \
+  | tar -zx \
   && mv lego /usr/local/bin/lego \
   && rm -rf $TEMP_DIR \
   && lego -h
 
 # doppler
 RUN DOPPLER_VERSION='3.56.0' TEMP_DIR=$(mktemp -d) \
+  ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
-  && curl -fsSLO \
-    "https://github.com/DopplerHQ/cli/releases/download/${DOPPLER_VERSION}/doppler_${DOPPLER_VERSION}_linux_amd64.tar.gz" \
-  && tar -zxvf doppler_${DOPPLER_VERSION}_linux_amd64.tar.gz \
+  && curl -SL \
+    "https://github.com/DopplerHQ/cli/releases/download/${DOPPLER_VERSION}/doppler_${DOPPLER_VERSION}_linux_$ARCH.tar.gz" \
+  | tar -zx \
   && mv doppler /usr/local/bin/doppler \
   && rm -rf $TEMP_DIR \
   && doppler -h
+
+COPY --from=docker/buildx-bin:0.10.4 /buildx /usr/libexec/docker/cli-plugins/docker-buildx
