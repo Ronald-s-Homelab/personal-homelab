@@ -1,0 +1,8 @@
+instances:
+  soujunior-services:
+    type: t3.micro
+    key_name: ronald
+    monitoring: no
+    vpc_security_group_ids:
+     - teste
+    subnet_id: teste
