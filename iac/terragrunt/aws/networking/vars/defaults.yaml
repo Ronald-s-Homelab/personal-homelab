@@ -1,0 +1,6 @@
+vpc_default:
+  enable_dns_hostnames: yes
+  enable_dns_support: yes
+  endpoints_enabled: no
+  enable_nat_gateway: no
+  single_nat_gateway: no

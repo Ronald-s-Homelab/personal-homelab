@@ -1,36 +1,36 @@
-# vpc:
-#   ronald-cluster:
-#     cidr: 172.24.145.0/24
-#     secondary_cidr: 100.96.0.0/18
-#     azs:
-#       - us-east-2a
-#       - us-east-2b
-#       - us-east-2c
-#     public_subnets:
-#       - 172.24.145.0/26
-#       - 172.24.145.64/26
-#       - 172.24.145.128/26
-#     private_subnets:
-#       - 100.96.0.0/20
-#       - 100.96.16.0/20
-#       - 100.96.32.0/20
-#     enable_dns_hostnames: yes
-#     enable_dns_support: yes
-#     endpoints_enabled: no
+vpc:
+  ronald-cluster:
+    cidr: 172.24.145.0/24
+    secondary_cidr: 100.96.0.0/18
+    azs:
+      - us-east-2a
+      - us-east-2b
+      - us-east-2c
+    public_subnets:
+      - 172.24.145.0/26
+      - 172.24.145.64/26
+      - 172.24.145.128/26
+    private_subnets:
+      - 100.96.0.0/20
+      - 100.96.16.0/20
+      - 100.96.32.0/20
+    enable_dns_hostnames: yes
+    enable_dns_support: yes
+    endpoints_enabled: no
 
 security_rules:
   ronald-cluster-cluster-rule:
-    vpc_name: Workspace-VPC
+    vpc_name: ronald-cluster
     ingress_cidr:
       - from_port: 443
         to_port: 443
         protocol: TCP
         description: Node Groups to cluster API
-        cidr_blocks: 10.144.0.0/16,10.0.28.0/22
+        cidr_blocks: 172.24.145.0/24
 
-    outbound_cidr:
-      - from_port: 0
-        to_port: 65535
-        protocol: TCP
-        description: all ports
-        cidr_blocks: 0.0.0.0/0
+    # outbound_cidr:
+    #   - from_port: 0
+    #     to_port: 65535
+    #     protocol: TCP
+    #     description: all ports
+    #     cidr_blocks: 0.0.0.0/0

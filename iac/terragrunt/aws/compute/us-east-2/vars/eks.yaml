@@ -1,0 +1,8 @@
+cluster_version: 1.24
+vpc_name: ronald-cluster
+subnets:
+  - ronald-cluster-private-us-east-2a
+  - ronald-cluster-private-us-east-2b
+cluster_security_group_id:
+node_groups:
+  green-node-01:
