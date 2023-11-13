@@ -1,0 +1,18 @@
+port_fwd:
+  nat_rules:
+    udp:
+      - name: warzone
+        port: 3074
+      - name: warzone
+        port: 3478
+      - name: warzone
+        port: 27036
+      - name: warzone
+        port: 4379-4380
+      - name: warzone
+        port: 27000-27031
+    tcp:
+      - name: warzone
+        port: 3074
+      - name: warzone
+        port: 27014-27050

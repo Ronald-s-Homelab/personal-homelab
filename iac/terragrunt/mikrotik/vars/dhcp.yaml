@@ -1,0 +1,15 @@
+leases: {}
+#   24:FD:0D:23:0C:82: "192.168.88.2" # ap-sala
+#   8C:49:62:F0:7B:12: "192.168.88.5" # roku-quarto
+#   50:EB:F6:37:24:91: "192.168.88.20" # pc
+#   F0:C3:71:D6:76:ED: "192.168.88.21" # ronald-iphone
+#   C0:A5:3E:34:0C:3A: "192.168.88.100" # iphone-fat
+#   E4:76:84:E9:14:4A: "192.168.88.101" # iphone-nay
+
+servers:
+  dhcp1:
+    interface: ether7
+    address_pool: dhcp_pool1
+  dhcp2:
+    interface: ether8
+    address_pool: dhcp_pool2
