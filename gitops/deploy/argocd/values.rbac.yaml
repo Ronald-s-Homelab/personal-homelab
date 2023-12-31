@@ -1,6 +1,0 @@
-server:
-  config:
-    admin.enabled: "true"
-  rbacConfigCreate: true
-  rbacConfig:
-    policy.default: role:readonly

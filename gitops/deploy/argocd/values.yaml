@@ -1,17 +1,4 @@
 server:
-  config:
-    url: https://argocd.ronaldmiranda.com.br
-    application.resourceTrackingMethod: annotation
-    configManagementPlugins: |
-      - name: helm-resolver
-        init:
-          command: ["sh", "-c"]
-          args: ['helm repo add "$ARGOCD_ENV_REPO_NAME" "$ARGOCD_ENV_REPO"; helm repo update']
-        generate:
-          command:
-            - "sh"
-            - "-c"
-            - $(git rev-parse --show-toplevel)/tools/argo/helm-resolver.sh
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
@@ -20,40 +7,41 @@ server:
         matchLabels:
           app.kubernetes.io/component: server
 
-  extraArgs:
-    - --insecure
   ingress:
     enabled: true
     extraPaths: []
     hosts:
-      - argocd.ronaldmiranda.com.br
+      - argocd.rnld.dev
     https: true
     ingressClassName: nginx
     pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod-http
     paths:
       - /
     tls:
       - hosts:
-          - argocd.ronaldmiranda.com.br
+          - argocd.rnld.dev
         secretName: ronaldmiranda-cert
 
   additionalApplications:
-    - name: argo-applications
+    - name: self-argocd-in-cluster
       namespace: argocd-system
       additionalLabels: {}
       additionalAnnotations: {}
       finalizers:
         - resources-finalizer.argocd.argoproj.io
       project: default
-      source:
-        repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-        targetRevision: main
-        path: gitops/stable/argo-resources
-        helm:
-          valueFiles:
-            - ../../deploy/argo-resources/appdefinitions.yaml
-            - ../../deploy/argo-resources/clusters.yaml
-            - ../../deploy/argo-resources/projects.yaml
+      sources:
+        - repoURL: 'https://argoproj.github.io/argo-helm'
+          chart: argo-cd
+          targetRevision: 5.52.0
+          helm:
+            valueFiles:
+            - $values/gitops/deploy/argocd/values.yaml
+        - repoURL: 'https://github.com/Ronald-s-Homelab/personal-homelab.git'
+          targetRevision: main
+          ref: values
       destination:
         name: in-cluster
         namespace: argocd-system
@@ -61,6 +49,29 @@ server:
         automated:
           prune: false
           selfHeal: false
+  #   - name: argo-applications
+  #     namespace: argocd-system
+  #     additionalLabels: {}
+  #     additionalAnnotations: {}
+  #     finalizers:
+  #       - resources-finalizer.argocd.argoproj.io
+  #     project: default
+  #     source:
+  #       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+  #       targetRevision: main
+  #       path: gitops/stable/argo-resources
+  #       helm:
+  #         valueFiles:
+  #           - ../../deploy/argo-resources/appdefinitions.yaml
+  #           - ../../deploy/argo-resources/clusters.yaml
+  #           - ../../deploy/argo-resources/projects.yaml
+  #     destination:
+  #       name: in-cluster
+  #       namespace: argocd-system
+  #     syncPolicy:
+  #       automated:
+  #         prune: false
+  #         selfHeal: false
 
 controller:
   replicas: 2
@@ -87,3 +98,99 @@ repoServer:
       labelSelector:
         matchLabels:
           app.kubernetes.io/component: repo-server
+
+dex:
+  resources:
+    limits:
+      cpu: 300m
+      memory: 500Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+configs:
+  repositories:
+    ronald-s-homelab:
+      url: https://github.com/Ronald-s-Homelab/personal-homelab
+      name: personal-homelab
+
+  cmp:
+    create: true
+    plugins:
+      helm-resolver:
+        init:
+          command: ["sh", "-c"]
+          args: ['helm repo add "$ARGOCD_ENV_REPO_NAME" "$ARGOCD_ENV_REPO"; helm repo update']
+        generate:
+          command:
+            - "sh"
+            - "-c"
+            - $(git rev-parse --show-toplevel)/tools/argo/helm-resolver.sh
+
+  cm:
+    url: https://argocd.rnld.dev
+    admin.enabled: false
+    application.resourceTrackingMethod: annotation
+    create: true
+    dex.config: |
+      connectors:
+        - type: github
+          id: github
+          name: Github (ronald-s-homelab)
+          config:
+            # Those variables comes from a containing keys from a secret
+            # called argocd-secret created by the ExternalSecret
+            clientID: $client_id
+            clientSecret: $client_secret
+            orgs:
+            - name: Ronald-s-Homelab
+              teams:
+                - devops
+            teamNameField: both
+
+    jsonnet.enable: false
+    kustomize.enable: false
+    resource.customizations.ignoreDifferences.admissionregistration.k8s.io_MutatingWebhookConfiguration: |
+      jqPathExpressions:
+      - '.webhooks[]?.clientConfig.caBundle'
+    resource.customizations.ignoreDifferences.admissionregistration.k8s.io_ValidatingWebhookConfiguration: |
+      jqPathExpressions:
+      - '.webhooks[]?.clientConfig.caBundle'
+    server.rbac.log.enforce.enable: true
+  params:
+    server.disable.auth: false
+    server.insecure: true
+    server.enable.gzip: true
+    controller.status.processors: "50"
+    controller.operation.processors: "25"
+    controller.repo.server.timeout.seconds: "120"
+    # Ref: https://argo-cd.readthedocs.io/en/release-1.8/operator-manual/high_availability/#argocd-repo-server
+    # It is commented for future analysis.
+    # reposerver.parallelism.limit: ""
+  rbac:
+    create: true
+    policy.csv: |
+      p, role:readonly, applicationsets, get, */*, allow
+      p, role:admin, applicationsets, *, */*, allow
+      g, Ronald-s-Homelab:devops, role:admin
+    policy.default: role:readonly
+
+extraObjects:
+  - apiVersion: external-secrets.io/v1alpha1
+    kind: ExternalSecret
+    metadata:
+      labels:
+        app: argocd
+      name: argocd-secret-es
+    spec:
+      dataFrom:
+        - key: ARGOCD_OAUTH_CONFIG
+      refreshInterval: 1h
+      secretStoreRef:
+        kind: ClusterSecretStore
+        name: doppler-css
+      target:
+        creationPolicy: Merge
+        name: argocd-secret
+        template:
+          type: Opaque

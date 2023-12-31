@@ -12,14 +12,11 @@ fi
 
 helmChartName='argo-cd'
 helmReleaseName="self-argocd-in-cluster"
-helmChartVersion='4.8.0'
+helmChartVersion='5.52.0'
 helmChartRepo='https://argoproj.github.io/argo-helm'
 chartNamespace="argocd-system"
 
-
 command="install"
-
-yq 'del(.server.ingress)' values.yaml > values.yaml.tmp
 
 declare -a args=(
   $helmReleaseName
@@ -30,13 +27,13 @@ declare -a args=(
   '--kube-context='$KUBE_CONTEXT''
   '--version '$helmChartVersion''
   '--wait'
-  '-f ./values.yaml.tmp'
+  '-f ./values.yaml'
   '-n='$chartNamespace''
   $DRY_RUN
 )
 
-if [[ $(helm list -n $chartNamespace -o json | \
-    jq -r '.[] | select(.name=="'$helmReleaseName'") | true') == true ]];then
+if [[ $(helm list -n $chartNamespace -o json |
+  jq -r '.[] | select(.name=="'$helmReleaseName'") | true') == true ]]; then
   command="upgrade"
   args+=('--install' '--reset-values')
 else

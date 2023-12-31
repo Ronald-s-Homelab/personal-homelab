@@ -1,6 +1,0 @@
-version: 4.9.16
-chart_name: argo-cd
-release_name: argocd
-chart_repo: https://argoproj.github.io/argo-helm
-namespace: argocd-system
-value_files: "-f values.yaml -f values.rbac.yaml"
