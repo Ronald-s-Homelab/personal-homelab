@@ -24,31 +24,6 @@ server:
           - argocd.rnld.dev
         secretName: ronaldmiranda-cert
 
-  additionalApplications:
-    - name: self-argocd-in-cluster
-      namespace: argocd-system
-      additionalLabels: {}
-      additionalAnnotations: {}
-      finalizers:
-        - resources-finalizer.argocd.argoproj.io
-      project: default
-      sources:
-        - repoURL: 'https://argoproj.github.io/argo-helm'
-          chart: argo-cd
-          targetRevision: 5.52.0
-          helm:
-            valueFiles:
-            - $values/gitops/deploy/argocd/values.yaml
-        - repoURL: 'https://github.com/Ronald-s-Homelab/personal-homelab.git'
-          targetRevision: main
-          ref: values
-      destination:
-        name: in-cluster
-        namespace: argocd-system
-      syncPolicy:
-        automated:
-          prune: false
-          selfHeal: false
   #   - name: argo-applications
   #     namespace: argocd-system
   #     additionalLabels: {}
@@ -185,7 +160,7 @@ extraObjects:
     spec:
       dataFrom:
         - key: ARGOCD_OAUTH_CONFIG
-      refreshInterval: 1h
+      refreshInterval: 1h0m0s
       secretStoreRef:
         kind: ClusterSecretStore
         name: doppler-css
@@ -194,3 +169,29 @@ extraObjects:
         name: argocd-secret
         template:
           type: Opaque
+
+applications:
+  - name: self-argocd-in-cluster
+    namespace: argocd-system
+    additionalLabels: {}
+    additionalAnnotations: {}
+    finalizers:
+      - resources-finalizer.argocd.argoproj.io
+    project: default
+    sources:
+      - repoURL: 'https://argoproj.github.io/argo-helm'
+        chart: argo-cd
+        targetRevision: 5.52.0
+        helm:
+          valueFiles:
+          - $values/gitops/deploy/argocd/values.yaml
+      - repoURL: 'https://github.com/Ronald-s-Homelab/personal-homelab.git'
+        targetRevision: main
+        ref: values
+    destination:
+      name: in-cluster
+      namespace: argocd-system
+    syncPolicy:
+      automated:
+        prune: false
+        selfHeal: false
