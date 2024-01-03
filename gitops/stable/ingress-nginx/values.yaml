@@ -1,6 +1,12 @@
 ingress-nginx:
   controller:
     kind: DaemonSet
+    image:
+      registry: 676516931198.dkr.ecr.us-east-2.amazonaws.com/k8s
+    admissionWebhooks:
+      patch:
+        image:
+          registry: 676516931198.dkr.ecr.us-east-2.amazonaws.com/k8s
     extraArgs:
       enable-ssl-passthrough: ""
     publishService:
@@ -9,6 +15,10 @@ ingress-nginx:
     service:
       enabled: true
       externalTrafficPolicy: Local
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-type: nlb
+        service.beta.kubernetes.io/aws-load-balancer-eip-allocations: eipalloc-00b36c9c5edc2d5ce
+
     config:
       custom-http-errors: 413,502,503,504
       generate-request-id: "true"

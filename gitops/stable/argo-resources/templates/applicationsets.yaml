@@ -1,0 +1,58 @@
+{{ range $k,$v := .Values.applicationsets }}
+{{ if $v.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $k }}-appset
+spec:
+  {{- if $v.goTemplate }}
+  goTemplate: yes
+  goTemplateOptions: ["missingkey=error"]
+  {{- end }}
+  {{ with $v.destinations }}
+  generators:
+  - list:
+      elements:
+      {{- range $k,$v := . }}
+      - ns: {{ $k }}
+        cluster: {{ $v }}
+      {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      name: {{ $k }}-{{`{{.cluster}}`}}
+      {{- if $v.haveFinalizers }}
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+      {{- end }}
+    spec:
+      project: default
+      {{- with $v.sourcedValues }}
+      sources:
+        - chart: {{ .helm.chart }}
+          repoURL: {{ .helm.repoURL }}
+          targetRevision: {{ .helm.revision }}
+          helm:
+            valueFiles:
+            {{- range .helm.valueFiles }}
+            - '$values/{{ . }}'
+            {{- end }}
+        - ref: values
+          repoURL: {{ .values.valuesRepo }}
+          targetRevision: {{ .values.targetRevision }}
+      {{- end }}
+      destination:
+        name: '{{`{{ .cluster }}`}}'
+        namespace: '{{ `{{ .ns }}` }}'
+      {{- if or $v.selfHeal $v.syncOptions }}
+      syncPolicy:
+        {{- if $v.selfHeal }}
+        automated:
+          selfHeal: true
+        {{- end }}
+        {{- with $v.syncOptions }}
+        syncOptions: {{ toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end}}
+{{- end}}
+{{- end }}

@@ -24,30 +24,6 @@ server:
           - argocd.rnld.dev
         secretName: ronaldmiranda-cert
 
-  #   - name: argo-applications
-  #     namespace: argocd-system
-  #     additionalLabels: {}
-  #     additionalAnnotations: {}
-  #     finalizers:
-  #       - resources-finalizer.argocd.argoproj.io
-  #     project: default
-  #     source:
-  #       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-  #       targetRevision: main
-  #       path: gitops/stable/argo-resources
-  #       helm:
-  #         valueFiles:
-  #           - ../../deploy/argo-resources/appdefinitions.yaml
-  #           - ../../deploy/argo-resources/clusters.yaml
-  #           - ../../deploy/argo-resources/projects.yaml
-  #     destination:
-  #       name: in-cluster
-  #       namespace: argocd-system
-  #     syncPolicy:
-  #       automated:
-  #         prune: false
-  #         selfHeal: false
-
 controller:
   replicas: 2
   enableStatefulSet: true

@@ -1,0 +1,22 @@
+applicationsets:
+  teste:
+    enabled: true
+    goTemplate: yes
+    haveFinalizers: yes
+    selfHeal: yes
+
+    syncOptions:
+      - CreateNamespace=true
+
+    destinations:
+      argocd-system: in-cluster
+    sourcedValues:
+      values:
+        valuesRepo: https://github.com/Ronald-s-Homelab/personal-homelab.git
+        targetRevision: main
+      helm:
+        valueFiles:
+          - gitops/deploy/argocd/values.yaml
+        repoURL: https://argoproj.github.io/argo-helm
+        chart: argo-cd
+        revision: 5.52.0

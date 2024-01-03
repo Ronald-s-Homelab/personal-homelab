@@ -41,5 +41,4 @@ else
 fi
 
 echo "Installing/Upgrading Helm Chart ${helmReleaseName} in ${KUBE_CONTEXT} Context Kubernetes"
-helm $command ${args[*]}
-rm values.yaml.tmp
+helm dep update ${helmChartRepo} && helm $command ${args[*]}
