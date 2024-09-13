@@ -1,4 +1,4 @@
-FROM ubuntu:jammy-20230308
+FROM ubuntu:noble-20240801
 
 LABEL maintainer=ronald
 
@@ -8,34 +8,34 @@ ENV TZ='America/Recife'
 
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
-      apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+  apt-get update && DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update && \
-    DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
-    sudo \
-    apt-transport-https \
-    bash-completion \
-    ca-certificates \
-    curl \
-    git \
-    htop \
-    iproute2 \
-    iptables \
-    iputils-ping \
-    less \
-    lsb-release \
-    netcat \
-    socat \
-    ssh \
-    telnet \
-    tmux \
-    tree \
-    unzip \
-    vim \
-    zsh \
-    fzf \
-    python3 python3-pip
+  apt-get update && \
+  DEBIAN_FRONTEND="noninteractive" apt-get install -y --no-install-recommends \
+  sudo \
+  apt-transport-https \
+  bash-completion \
+  ca-certificates \
+  curl \
+  git \
+  htop \
+  iproute2 \
+  iptables \
+  iputils-ping \
+  less \
+  lsb-release \
+  ncat \
+  socat \
+  ssh \
+  telnet \
+  tmux \
+  tree \
+  unzip \
+  vim \
+  zsh \
+  fzf \
+  python3 python3-pip
 
 # ZSH
 
@@ -49,17 +49,17 @@ RUN bash -c \
 # Install powelevel10k theme
 
 RUN git clone --depth=1 \
-        https://github.com/romkatv/powerlevel10k.git \
-        ${ZSH_CUSTOM}/themes/powerlevel10k
+  https://github.com/romkatv/powerlevel10k.git \
+  ${ZSH_CUSTOM}/themes/powerlevel10k
 
 # Install default plugins
 RUN git clone --depth=1 \
-        https://github.com/zsh-users/zsh-syntax-highlighting.git \
-        ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
+  https://github.com/zsh-users/zsh-syntax-highlighting.git \
+  ${ZSH_CUSTOM}/plugins/zsh-syntax-highlighting
 
 RUN git clone --depth=1 \
-        https://github.com/zsh-users/zsh-autosuggestions \
-        ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
+  https://github.com/zsh-users/zsh-autosuggestions \
+  ${ZSH_CUSTOM}/plugins/zsh-autosuggestions
 
 # GCloud.
 
@@ -100,7 +100,7 @@ RUN TERRAFORM_VERSION="1.4.2" \
 
 # yq
 
-RUN YQ_VERSION="4.31.2" \
+RUN YQ_VERSION="4.44.3" \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && curl -o /usr/local/bin/yq -fsSL \
   "https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_$ARCH" \
@@ -120,7 +120,7 @@ RUN TERRAGRUNT_VERSION="0.45.0" \
 
 # Kubectl
 
-RUN KUBECTL_VERSION="1.25.4" \
+RUN KUBECTL_VERSION="1.29.1" \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && curl -o /bin/kubectl -fsSL \
   "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/$ARCH/kubectl" \
@@ -132,7 +132,7 @@ RUN KUBECTL_VERSION="1.25.4" \
 
 # Kubectx
 
-RUN KUBECTX_VERSION="0.9.4" \
+RUN KUBECTX_VERSION="0.9.5" \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
   && curl -o kubectx_linux.tar.gz -fsSL \
   "https://github.com/ahmetb/kubectx/releases/download/v${KUBECTX_VERSION}/kubectx_v${KUBECTX_VERSION}_linux_$ARCH.tar.gz" \
@@ -143,7 +143,7 @@ RUN KUBECTX_VERSION="0.9.4" \
 
 # Kubens
 
-RUN KUBENS_VERSION="0.9.4" \
+RUN KUBENS_VERSION="0.9.5" \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
   && curl -o kubens_linux.tar.gz -fsSL \
   "https://github.com/ahmetb/kubectx/releases/download/v${KUBENS_VERSION}/kubens_v${KUBENS_VERSION}_linux_$ARCH.tar.gz" \
@@ -154,7 +154,7 @@ RUN KUBENS_VERSION="0.9.4" \
 
 # k9s
 
-RUN K9S_VERSION="v0.27.3" \
+RUN K9S_VERSION="v0.32.5" \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && TEMP_DIR="$(mktemp -d)" \
   && curl -o k9s.tar.gz -fsSLO \
@@ -170,13 +170,13 @@ RUN HELM_VERSION="3.11.1" TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
   && curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-$ARCH.tar.gz" | tar -zxv linux-$ARCH/helm \
-    | xargs -I % mv -- % /usr/local/bin/helm \
+  | xargs -I % mv -- % /usr/local/bin/helm \
   && helm version \
   && unset HELM_VERSION && rm -rf $TEMP_DIR
 
 # Teleport
 
-RUN TELEPORT_VERSION="12.1.0" TEMP_DIR=$(mktemp -d) \
+RUN TELEPORT_VERSION="14.3.0" TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
   && curl -SL https://cdn.teleport.dev/teleport-v${TELEPORT_VERSION}-linux-$ARCH-bin.tar.gz | tar -xz --strip-components=1 \
@@ -199,13 +199,13 @@ RUN OP_VERSION='2.16.0' TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
   && curl -o op.zip -fsSL \
-    "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_${ARCH}_v${OP_VERSION}.zip" \
+  "https://cache.agilebits.com/dist/1P/op2/pkg/v${OP_VERSION}/op_linux_${ARCH}_v${OP_VERSION}.zip" \
   && unzip op.zip \
   && mv op /usr/bin \
   && op --version \
   && rm -rf $TEMP_DIR
 
-RUN OP_SSH_VERSION="8.10.3" && TEMP_DIR=$(mktemp -d) \
+RUN OP_SSH_VERSION="8.10.28" && TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="x64" ; fi \
   && cd $TEMP_DIR \
   && curl -SL https://downloads.1password.com/linux/tar/stable/$(uname -m)/1password-${OP_SSH_VERSION}.$ARCH.tar.gz \
@@ -214,11 +214,11 @@ RUN OP_SSH_VERSION="8.10.3" && TEMP_DIR=$(mktemp -d) \
   && rm -rf $TEMP_DIR
 
 # LazyGit
-RUN LG_VERSION='0.37.0' TEMP_DIR=$(mktemp -d) \
+RUN LG_VERSION='0.44.0' TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
   && cd $TEMP_DIR \
   && curl -SL \
-    "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_$ARCH.tar.gz" \
+  "https://github.com/jesseduffield/lazygit/releases/download/v${LG_VERSION}/lazygit_${LG_VERSION}_Linux_$ARCH.tar.gz" \
   | tar -zx \
   && mv lazygit /usr/local/bin/lazygit \
   && rm -rf $TEMP_DIR \
@@ -226,33 +226,33 @@ RUN LG_VERSION='0.37.0' TEMP_DIR=$(mktemp -d) \
 
 # LazyDocker
 
-RUN LD_VERSION='0.20.0' TEMP_DIR=$(mktemp -d) \
+RUN LD_VERSION='0.23.3' TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; fi \
   && cd $TEMP_DIR \
   && curl -SL \
-    "https://github.com/jesseduffield/lazydocker/releases/download/v${LD_VERSION}/lazydocker_${LD_VERSION}_Linux_$ARCH.tar.gz" \
+  "https://github.com/jesseduffield/lazydocker/releases/download/v${LD_VERSION}/lazydocker_${LD_VERSION}_Linux_$ARCH.tar.gz" \
   | tar -zx \
   && mv lazydocker /usr/local/bin/lazydocker \
   && rm -rf $TEMP_DIR \
   && lazydocker -h
 
 # lego
-RUN LEGO_VERSION='4.10.2' TEMP_DIR=$(mktemp -d) \
+RUN LEGO_VERSION='4.18.0' TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
   && curl -SL \
-    "https://github.com/go-acme/lego/releases/download/v${LEGO_VERSION}/lego_v${LEGO_VERSION}_linux_$ARCH.tar.gz" \
+  "https://github.com/go-acme/lego/releases/download/v${LEGO_VERSION}/lego_v${LEGO_VERSION}_linux_$ARCH.tar.gz" \
   | tar -zx \
   && mv lego /usr/local/bin/lego \
   && rm -rf $TEMP_DIR \
   && lego -h
 
 # doppler
-RUN DOPPLER_VERSION='3.56.0' TEMP_DIR=$(mktemp -d) \
+RUN DOPPLER_VERSION='3.69.1' TEMP_DIR=$(mktemp -d) \
   ARCH=`uname -m`; if [[ $ARCH == "aarch64" ]] ; then ARCH="arm64" ; else ARCH="amd64" ; fi \
   && cd $TEMP_DIR \
   && curl -SL \
-    "https://github.com/DopplerHQ/cli/releases/download/${DOPPLER_VERSION}/doppler_${DOPPLER_VERSION}_linux_$ARCH.tar.gz" \
+  "https://github.com/DopplerHQ/cli/releases/download/${DOPPLER_VERSION}/doppler_${DOPPLER_VERSION}_linux_$ARCH.tar.gz" \
   | tar -zx \
   && mv doppler /usr/local/bin/doppler \
   && rm -rf $TEMP_DIR \

@@ -27,8 +27,8 @@ export TF_VAR_DISCORD_BOT_TOKEN='op://cli/discord-tf-bot/token'
 export TF_VAR_VAULT_TOKEN='op://private/home-hashicorp-vault/ROOT'
 
 # minio terraform state
-export AWS_ACCESS_KEY_ID='op://cli/minio-local/user'
-export AWS_SECRET_ACCESS_KEY='op://cli/minio-local/secret'
+export AWS_ACCESS_KEY_ID='op://cli/aws/AWS_ACCESS_KEY_ID'
+export AWS_SECRET_ACCESS_KEY='op://cli/aws/AWS_SECRET_ACCESS_KEY'
 
 # oracle
 export TF_VAR_tenancy_ocid='op://cli/oracle_tf_api/tenancy_ocid'
@@ -96,3 +96,13 @@ export DOCKER_HOST=unix://$HOME/docker.sock
 # Local customized path and environment settings, etc.
 
 [[ ! -f ~/.zshrc_local ]] || . ~/.zshrc_local
+
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+if ! command -v kubectl &>/dev/null || ! kubectl krew version &>/dev/null; then
+  echo "Installing krew..."
+  source /etc/rc/krew-install.sh
+
+else
+  echo "krew is already installed."
+fi

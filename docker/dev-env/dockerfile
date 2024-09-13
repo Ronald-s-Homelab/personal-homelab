@@ -8,7 +8,8 @@ ARG gid
 ARG groupcmd
 ARG workdir
 
-RUN eval $groupcmd
+RUN userdel -r ubuntu && \
+  eval $groupcmd
 
 RUN echo "${user}    ALL=NOPASSWD: ALL" > /etc/sudoers
 RUN chown $uid:$gid /usr/local/bin /etc/profile.d/ /home/$user
@@ -20,6 +21,7 @@ COPY etc/bashrc /etc/rc/bashrc
 COPY etc/zshrc /etc/rc/zshrc
 COPY etc/p10k /etc/rc/p10k
 COPY etc/init /etc/init
+COPY etc/krew-install.sh /etc/rc/krew-install.sh
 COPY --chown=$user ssh/config /etc/rc/.ssh/config
 
 RUN rm -f /home/$user/.bashrc /home/$user/.zshrc /home/$user/.p10k.zsh \
