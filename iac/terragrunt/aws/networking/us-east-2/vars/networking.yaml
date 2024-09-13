@@ -26,11 +26,11 @@ security_rules:
         to_port: 443
         protocol: TCP
         description: Node Groups to cluster API
-        cidr_blocks: 172.24.145.0/24
+        cidr_blocks: 10.144.0.0/16,10.0.28.0/22
 
-    # outbound_cidr:
-    #   - from_port: 0
-    #     to_port: 65535
-    #     protocol: TCP
-    #     description: all ports
-    #     cidr_blocks: 0.0.0.0/0
+    outbound_cidr:
+      - from_port: 0
+        to_port: 65535
+        protocol: TCP
+        description: all ports
+        cidr_blocks: 0.0.0.0/0
