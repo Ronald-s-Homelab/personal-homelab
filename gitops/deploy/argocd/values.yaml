@@ -1,3 +1,6 @@
+global:
+  domain: argocd.rnld.dev
+
 server:
   topologySpreadConstraints:
     - maxSkew: 1
@@ -9,44 +12,11 @@ server:
 
   ingress:
     enabled: true
-    extraPaths: []
-    hosts:
-      - argocd.rnld.dev
-    https: true
+    tls: true
     ingressClassName: nginx
-    pathType: Prefix
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod-http
-    paths:
-      - /
-    tls:
-      - hosts:
-          - argocd.rnld.dev
-        secretName: ronaldmiranda-cert
 
-  #   - name: argo-applications
-  #     namespace: argocd-system
-  #     additionalLabels: {}
-  #     additionalAnnotations: {}
-  #     finalizers:
-  #       - resources-finalizer.argocd.argoproj.io
-  #     project: default
-  #     source:
-  #       repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-  #       targetRevision: main
-  #       path: gitops/stable/argo-resources
-  #       helm:
-  #         valueFiles:
-  #           - ../../deploy/argo-resources/appdefinitions.yaml
-  #           - ../../deploy/argo-resources/clusters.yaml
-  #           - ../../deploy/argo-resources/projects.yaml
-  #     destination:
-  #       name: in-cluster
-  #       namespace: argocd-system
-  #     syncPolicy:
-  #       automated:
-  #         prune: false
-  #         selfHeal: false
 
 controller:
   replicas: 2
@@ -80,8 +50,8 @@ dex:
       cpu: 300m
       memory: 500Mi
     requests:
-      cpu: 100m
-      memory: 128Mi
+      cpu: 25m
+      memory: 50Mi
 
 configs:
   repositories:
@@ -103,18 +73,16 @@ configs:
             - $(git rev-parse --show-toplevel)/tools/argo/helm-resolver.sh
 
   cm:
-    url: https://argocd.rnld.dev
-    admin.enabled: false
-    application.resourceTrackingMethod: annotation
     create: true
+    application.resourceTrackingMethod: annotation
+    statusbadge.enabled: true
+
     dex.config: |
       connectors:
         - type: github
           id: github
           name: Github (ronald-s-homelab)
           config:
-            # Those variables comes from a containing keys from a secret
-            # called argocd-secret created by the ExternalSecret
             clientID: $client_id
             clientSecret: $client_secret
             orgs:
@@ -125,13 +93,17 @@ configs:
 
     jsonnet.enable: false
     kustomize.enable: false
+
     resource.customizations.ignoreDifferences.admissionregistration.k8s.io_MutatingWebhookConfiguration: |
       jqPathExpressions:
       - '.webhooks[]?.clientConfig.caBundle'
+
     resource.customizations.ignoreDifferences.admissionregistration.k8s.io_ValidatingWebhookConfiguration: |
       jqPathExpressions:
       - '.webhooks[]?.clientConfig.caBundle'
+
     server.rbac.log.enforce.enable: true
+
   params:
     server.disable.auth: false
     server.insecure: true
@@ -151,7 +123,7 @@ configs:
     policy.default: role:readonly
 
 extraObjects:
-  - apiVersion: external-secrets.io/v1alpha1
+  - apiVersion: external-secrets.io/v1beta1
     kind: ExternalSecret
     metadata:
       labels:
@@ -181,7 +153,7 @@ applications:
     sources:
       - repoURL: 'https://argoproj.github.io/argo-helm'
         chart: argo-cd
-        targetRevision: 5.52.0
+        targetRevision: 7.5.2
         helm:
           valueFiles:
           - $values/gitops/deploy/argocd/values.yaml
@@ -192,6 +164,3 @@ applications:
       name: in-cluster
       namespace: argocd-system
     syncPolicy:
-      automated:
-        prune: false
-        selfHeal: false
