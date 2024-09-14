@@ -1,23 +1,7 @@
 clusters:
   - name: in-cluster
     enabled: true
-    applicationSets:
-      self-argocd:
-        enable: true
+    applicationSets: {}
     applications:
-      common-resources-app:
-        enable: true
-      nginx-ingress:
-        enable: true
-  - name: oracle
-    enabled: true
-    applicationSets:
-      self-atlantis:
-        enable: true
-      nginx-ingress:
-        enable: true
-      replicator:
-        enable: true
-    applications:
-      teleport-server-app:
+      kube-oidc-proxy:
         enable: true
