@@ -131,7 +131,10 @@ extraObjects:
       name: argocd-secret-es
     spec:
       dataFrom:
-        - key: ARGOCD_OAUTH_CONFIG
+        - extract:
+            conversionStrategy: Default
+            decodingStrategy: None
+            key: ARGOCD_OAUTH_CONFIG
       refreshInterval: 1h0m0s
       secretStoreRef:
         kind: ClusterSecretStore
