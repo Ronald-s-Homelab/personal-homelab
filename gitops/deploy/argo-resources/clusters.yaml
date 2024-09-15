@@ -5,3 +5,5 @@ clusters:
     applications:
       kube-oidc-proxy:
         enable: true
+      bateponto:
+        enable: true

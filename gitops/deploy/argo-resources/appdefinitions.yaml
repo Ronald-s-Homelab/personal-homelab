@@ -22,7 +22,7 @@ appDefinitions:
     source:
       repoURL: https://github.com/ronaldmiranda/bate-ponto-bot.git
       targetRevision: v2-deploy
-      path: gitops/stable/foundation
+      path: infra/stable/foundation
       helm:
         releaseName: bateponto-bot
         valueFiles:
