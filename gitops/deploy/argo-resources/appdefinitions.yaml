@@ -16,6 +16,21 @@ appDefinitions:
       namespace: openunison
     syncPolicy: {}
 
+  bateponto:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/ronaldmiranda/bate-ponto-bot.git
+      targetRevision: v2-deploy
+      path: gitops/stable/foundation
+      helm:
+        releaseName: bateponto-bot
+        valueFiles:
+          - ../../deploy/foundation/dev.yaml
+    destination:
+      namespace: bateponto
+    syncPolicy: {}
+
   # external-secrets:
   #   namespace: argocd-system
   #   project: default
