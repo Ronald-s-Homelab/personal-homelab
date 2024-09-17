@@ -18,6 +18,9 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod-http
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
   enabled: true
 
   hosts:
