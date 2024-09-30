@@ -37,7 +37,7 @@ appDefinitions:
     source:
       repoURL: https://github.com/ronaldmiranda/enhanced-whitelist.git
       targetRevision: infra
-      path: infra/infra/chart
+      path: infra/chart
       helm:
         releaseName: whitelist-bot
     destination:
