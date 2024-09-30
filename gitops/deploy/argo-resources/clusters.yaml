@@ -7,3 +7,5 @@ clusters:
         enable: true
       bateponto:
         enable: true
+      whitelist:
+        enable: true
