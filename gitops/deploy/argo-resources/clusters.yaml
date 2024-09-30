@@ -7,3 +7,5 @@ clusters:
         enable: true
       whitelist:
         enable: true
+      rnld-api:
+        enable: true

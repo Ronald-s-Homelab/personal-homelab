@@ -29,6 +29,19 @@ appDefinitions:
       namespace: bateponto
     syncPolicy: {}
 
+  rnld-api:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/ronaldmiranda/rp-discord-renamer.git
+      targetRevision: main
+      path: infra/chart
+      helm:
+        releaseName: atualizanickname
+    destination:
+      namespace: bateponto
+    syncPolicy: {}
+
   # external-secrets:
   #   namespace: argocd-system
   #   project: default
