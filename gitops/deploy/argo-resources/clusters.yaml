@@ -3,8 +3,6 @@ clusters:
     enabled: true
     applicationSets: {}
     applications:
-      kube-oidc-proxy:
-        enable: true
       bateponto:
         enable: true
       whitelist:
