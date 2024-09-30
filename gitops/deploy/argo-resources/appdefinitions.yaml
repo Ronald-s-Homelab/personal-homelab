@@ -1,21 +1,6 @@
 appsetsDefinitions: {}
 
 appDefinitions:
-  kube-oidc-proxy:
-    namespace: argocd-system
-    project: default
-    source:
-      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
-      targetRevision: main
-      path: gitops/stable/kube-oidc-proxy
-      helm:
-        releaseName: kube-oidc-proxy
-        valueFiles:
-          - ../../deploy/kube-oidc-proxy/values.yaml
-    destination:
-      namespace: openunison
-    syncPolicy: {}
-
   bateponto:
     namespace: argocd-system
     project: default
