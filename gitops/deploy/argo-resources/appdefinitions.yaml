@@ -35,7 +35,7 @@ appDefinitions:
     source:
       repoURL: https://github.com/ronaldmiranda/rp-discord-renamer.git
       targetRevision: main
-      path: infra/chart
+      path: infra/charts
       helm:
         releaseName: atualizanickname
     destination:
