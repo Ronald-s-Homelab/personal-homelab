@@ -31,6 +31,19 @@ appDefinitions:
       namespace: bateponto
     syncPolicy: {}
 
+  whitelist:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/ronaldmiranda/enhanced-whitelist.git
+      targetRevision: infra
+      path: infra/infra/chart
+      helm:
+        releaseName: whitelist-bot
+    destination:
+      namespace: bateponto
+    syncPolicy: {}
+
   # external-secrets:
   #   namespace: argocd-system
   #   project: default
