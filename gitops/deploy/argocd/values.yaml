@@ -38,7 +38,7 @@ notifications:
     headers:
     - name: Content-Type
       value: application/json
-  template.on-deployed: |
+  template.deployed: |
     webhook:
       discord:
         method: POST
