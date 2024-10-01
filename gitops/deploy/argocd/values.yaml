@@ -17,6 +17,81 @@ server:
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod-http
 
+notifications:
+ enabled: true
+ notifiers:
+  trigger.on-deployed: |
+    - when: app.status.operationState.phase in ['Succeeded'] and app.status.health.status == 'Healthy'
+      oncePer: app.status.sync.revision
+      send: [deployed:]
+  trigger.on-app-health-degraded: |
+    - when: app.status.health.status == 'Degraded'
+      send: [app-health-degraded:]
+  subscriptions: |
+    - recipients:
+      - discord
+      triggers:
+        - on-app-health-degraded
+        - on-deployed
+    service.webhook.discord: |
+      url: $rnld_discord_webhook_url
+      headers:
+      - name: Content-Type
+        value: application/json
+    template.on-deployed: |
+      webhook:
+        discord:
+          method: POST
+          body: |
+            {
+              "embeds": [
+                {
+                  "title": "Bot {{.app.metadata.name}} implantado com sucesso",
+                  "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                  "fields": [
+                    {
+                      "name": "Repositório",
+                      "value": "{{.app.spec.source.repoURL}}",
+                      "inline": "false"
+                    }
+                  ]
+                }
+              ]
+            }
+    template.app-health-degraded: |
+      webhook:
+        discord:
+          method: POST
+          body: |
+            {
+              "embeds": [
+                {
+                  "title": "Houve um problema na aplicação {{.app.metadata.name}}",
+                  "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                  "fields": [
+                    {
+                      "name": "Saúde",
+                      "value": "{{.app.status.health.status}}",
+                      "inline": "true"
+                    },
+                    {
+                      "name": "Repositório",
+                      "value": "{{.app.spec.source.repoURL}}",
+                      "inline": "false"
+                    }
+                    {{range $index, $c := .app.status.conditions}}
+                    {{if not $index}},{{end}}
+                    {{if $index}},{{end}}
+                    {
+                      "name": "{{$c.type}}",
+                      "value": "{{$c.message}}",
+                      "inline": "true"
+                    }
+                    {{end}}
+                  ]
+                }
+              ]
+            }
 
 controller:
   replicas: 2
