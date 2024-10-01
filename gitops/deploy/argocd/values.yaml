@@ -33,65 +33,65 @@ notifications:
       triggers:
         - on-app-health-degraded
         - on-deployed
-    service.webhook.discord: |
-      url: $rnld_discord_webhook_url
-      headers:
-      - name: Content-Type
-        value: application/json
-    template.on-deployed: |
-      webhook:
-        discord:
-          method: POST
-          body: |
-            {
-              "embeds": [
-                {
-                  "title": "Bot {{.app.metadata.name}} implantado com sucesso",
-                  "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                  "fields": [
-                    {
-                      "name": "Repositório",
-                      "value": "{{.app.spec.source.repoURL}}",
-                      "inline": "false"
-                    }
-                  ]
-                }
-              ]
-            }
-    template.app-health-degraded: |
-      webhook:
-        discord:
-          method: POST
-          body: |
-            {
-              "embeds": [
-                {
-                  "title": "Houve um problema na aplicação {{.app.metadata.name}}",
-                  "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
-                  "fields": [
-                    {
-                      "name": "Saúde",
-                      "value": "{{.app.status.health.status}}",
-                      "inline": "true"
-                    },
-                    {
-                      "name": "Repositório",
-                      "value": "{{.app.spec.source.repoURL}}",
-                      "inline": "false"
-                    }
-                    {{range $index, $c := .app.status.conditions}}
-                    {{if not $index}},{{end}}
-                    {{if $index}},{{end}}
-                    {
-                      "name": "{{$c.type}}",
-                      "value": "{{$c.message}}",
-                      "inline": "true"
-                    }
-                    {{end}}
-                  ]
-                }
-              ]
-            }
+  service.webhook.discord: |
+    url: $rnld_discord_webhook_url
+    headers:
+    - name: Content-Type
+      value: application/json
+  template.on-deployed: |
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "embeds": [
+              {
+                "title": "Bot {{.app.metadata.name}} implantado com sucesso",
+                "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                "fields": [
+                  {
+                    "name": "Repositório",
+                    "value": "{{.app.spec.source.repoURL}}",
+                    "inline": "false"
+                  }
+                ]
+              }
+            ]
+          }
+  template.app-health-degraded: |
+    webhook:
+      discord:
+        method: POST
+        body: |
+          {
+            "embeds": [
+              {
+                "title": "Houve um problema na aplicação {{.app.metadata.name}}",
+                "url": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                "fields": [
+                  {
+                    "name": "Saúde",
+                    "value": "{{.app.status.health.status}}",
+                    "inline": "true"
+                  },
+                  {
+                    "name": "Repositório",
+                    "value": "{{.app.spec.source.repoURL}}",
+                    "inline": "false"
+                  }
+                  {{range $index, $c := .app.status.conditions}}
+                  {{if not $index}},{{end}}
+                  {{if $index}},{{end}}
+                  {
+                    "name": "{{$c.type}}",
+                    "value": "{{$c.message}}",
+                    "inline": "true"
+                  }
+                  {{end}}
+                ]
+              }
+            ]
+          }
 
 controller:
   replicas: 2
