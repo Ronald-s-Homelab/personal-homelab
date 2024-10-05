@@ -46,7 +46,7 @@ appDefinitions:
     namespace: argocd-system
     project: default
     source:
-      repoURL: git@github.com:Ronald-s-Homelab/personal-homelab
+      repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
       targetRevision: main
       path: gitops/stable/ingress-nginx
       helm:
@@ -54,7 +54,7 @@ appDefinitions:
         valueFiles:
           - ../../deploy/nginx/values-oracle.yaml
     destination:
-      namespace: ingress-nginx
+      namespace: nginx-system
     syncPolicy: {}
 
   # external-secrets:
