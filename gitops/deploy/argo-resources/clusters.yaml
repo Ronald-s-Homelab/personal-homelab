@@ -3,6 +3,8 @@ clusters:
     enabled: true
     applicationSets: {}
     applications:
+      nginx-ingress:
+        enable: true
       bateponto:
         enable: true
       whitelist:

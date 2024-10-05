@@ -42,6 +42,21 @@ appDefinitions:
       namespace: bateponto
     syncPolicy: {}
 
+  nginx-ingress:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: git@github.com:Ronald-s-Homelab/personal-homelab
+      targetRevision: main
+      path: gitops/stable/ingress-nginx
+      helm:
+        releaseName: ingress-nginx
+        valueFiles:
+          - ../../deploy/nginx/values-oracle.yaml
+    destination:
+      namespace: ingress-nginx
+    syncPolicy: {}
+
   # external-secrets:
   #   namespace: argocd-system
   #   project: default
