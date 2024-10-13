@@ -10,7 +10,7 @@ ingress-nginx:
       enabled: true
       externalTrafficPolicy: Local
     config:
-      custom-http-errors: 413,502,503,504
+      custom-http-errors: 404,413,502,503,504
       generate-request-id: "true"
       proxy-buffer-size: "4k"
       proxy-body-size: "50m"
@@ -73,3 +73,21 @@ ingress-nginx:
         "upstream_response_time": "$upstream_response_time",
         "upstream_status": "$upstream_status"
         }'
+  defaultBackend:
+    enabled: true
+    image:
+      registry: registry.k8s.io
+      image: ingress-nginx/custom-error-pages
+      tag: v1.0.2@sha256:b2259cf6bfda813548a64bded551b1854cb600c4f095738b49b4c5cdf8ab9d21
+    extraVolumes:
+    - name: custom-error-pages
+      configMap:
+        name: custom-error-pages
+        items:
+        - key: "404"
+          path: "404.html"
+        - key: "503"
+          path: "503.html"
+    extraVolumeMounts:
+    - name: custom-error-pages
+      mountPath: /www
