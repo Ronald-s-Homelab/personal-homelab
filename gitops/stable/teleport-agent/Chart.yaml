@@ -5,5 +5,5 @@ appVersion: v0.0.1
 
 dependencies:
   - name: teleport-kube-agent
-    version: "14.3.0"
+    version: "17.0.5"
     repository: "https://charts.releases.teleport.dev"
