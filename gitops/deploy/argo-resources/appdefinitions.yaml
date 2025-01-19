@@ -16,6 +16,19 @@ appDefinitions:
       namespace: bateponto
     syncPolicy: {}
 
+  relatorios:
+    namespace: argocd-system
+    project: default
+    source:
+      repoURL: https://github.com/ronaldmiranda/rnld-relatorios.git
+      targetRevision: main
+      path: chart
+      helm:
+        releaseName: rnld-relatorios
+    destination:
+      namespace: rnld-relatorios
+    syncPolicy: {}
+
   whitelist:
     namespace: argocd-system
     project: default
