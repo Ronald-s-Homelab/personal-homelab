@@ -27,7 +27,10 @@ appDefinitions:
         releaseName: rnld-relatorios
     destination:
       namespace: rnld-relatorios
-    syncPolicy: {}
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
 
   whitelist:
     namespace: argocd-system

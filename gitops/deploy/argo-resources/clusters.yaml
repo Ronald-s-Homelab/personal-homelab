@@ -11,3 +11,5 @@ clusters:
         enable: true
       rnld-api:
         enable: true
+      relatorios:
+        enable: true
