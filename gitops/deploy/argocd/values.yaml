@@ -109,7 +109,7 @@ controller:
 
 repoServer:
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
   topologySpreadConstraints:
     - maxSkew: 1
