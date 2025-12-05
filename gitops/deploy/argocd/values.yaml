@@ -15,7 +15,7 @@ server:
     tls: true
     ingressClassName: nginx
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod-http
+      cert-manager.io/cluster-issuer: letsencrypt-prod
 
 notifications:
  enabled: true
