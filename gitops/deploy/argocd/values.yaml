@@ -94,11 +94,11 @@ notifications:
           }
 
 controller:
-  replicas: 2
+  replicas: 1
   enableStatefulSet: true
   env:
     - name: "ARGOCD_CONTROLLER_REPLICAS"
-      value: "2"
+      value: "1"
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
@@ -231,7 +231,7 @@ applications:
     sources:
       - repoURL: 'https://argoproj.github.io/argo-helm'
         chart: argo-cd
-        targetRevision: 7.5.2
+        targetRevision: 9.1.7
         helm:
           valueFiles:
           - $values/gitops/deploy/argocd/values.yaml
