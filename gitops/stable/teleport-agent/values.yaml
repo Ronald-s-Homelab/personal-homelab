@@ -2,3 +2,9 @@ teleport-kube-agent:
   proxyAddr: "teleport.ronaldmiranda.com.br:443"
   kubeClusterName: ronald-cluster
   secretName: teleport-secret
+  roles: kube,app,discovery
+  updater:
+    enabled: true
+  appResources:
+    - labels:
+        teleport-enabled: app
