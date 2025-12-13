@@ -6,6 +6,9 @@ teleport-kube-agent:
   appResources:
     - labels:
         teleport-enabled: app
+  teleportConfig:
+    discovery_service:
+      poll_interval: 30s
   kubernetesDiscovery:
   - types: ["app"]
     namespaces:
