@@ -11,6 +11,7 @@ ingress-nginx:
       externalTrafficPolicy: Local
     config:
       allow-snippet-annotations: 'true'
+      custom-http-errors: ''
       generate-request-id: "true"
       proxy-buffer-size: "4k"
       proxy-body-size: "50m"
@@ -29,11 +30,6 @@ ingress-nginx:
       ssl-session-tickets: "false"
       keep-alive-requests: "1000000"
       upstream-keepalive-requests: "1000000"
-      http-snippet: |
-        proxy_cache_path /tmp/nginx-cache levels=1:2 keys_zone=static-cache:2m max_size=100m inactive=7d use_temp_path=off;
-        proxy_cache_key $scheme$proxy_host$request_uri;
-        proxy_cache_lock on;
-        proxy_cache_use_stale updating;
       log-format-escape-json: "true"
       log-format-upstream: '{
         "body_bytes_sent": "$body_bytes_sent",
