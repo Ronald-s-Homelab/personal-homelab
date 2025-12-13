@@ -10,7 +10,7 @@ ingress-nginx:
       enabled: true
       externalTrafficPolicy: Local
     config:
-      custom-http-errors: 404,413,502,503,504
+      allow-snippet-annotations: 'true'
       generate-request-id: "true"
       proxy-buffer-size: "4k"
       proxy-body-size: "50m"
@@ -74,7 +74,7 @@ ingress-nginx:
         "upstream_status": "$upstream_status"
         }'
   defaultBackend:
-    enabled: true
+    enabled: false
     image:
       registry: registry.k8s.io
       image: ingress-nginx/custom-error-pages
