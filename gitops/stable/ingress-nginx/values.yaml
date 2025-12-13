@@ -9,6 +9,8 @@ ingress-nginx:
     service:
       enabled: true
       externalTrafficPolicy: Local
+    metrics:
+      enabled: true
     config:
       allow-snippet-annotations: 'true'
       custom-http-errors: ''
