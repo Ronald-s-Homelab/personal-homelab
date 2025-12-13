@@ -15,6 +15,7 @@ teleport-kube-agent:
      - rnld
      - rnld-logs
      - phpmyadmin
+     - envoy-gateway-system
     labels:
       rnld-apps: teleport
   updater:
