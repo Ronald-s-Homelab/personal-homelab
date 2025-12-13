@@ -3,6 +3,8 @@ teleport-kube-agent:
   kubeClusterName: ronald-cluster
   secretName: teleport-secret
   roles: kube,app,discovery
+  log:
+    format: json
   appResources:
     - labels:
         teleport-enabled: app
