@@ -10,6 +10,7 @@ teleport-kube-agent:
   - types: ["app"]
     namespaces:
      - rnld
+     - rnld-logs
      - phpmyadmin
     labels:
       rnld-apps: teleport
