@@ -188,8 +188,8 @@ configs:
     server.disable.auth: false
     server.insecure: true
     server.enable.gzip: true
-    controller.status.processors: "5"
-    controller.operation.processors: "5"
+    controller.status.processors: "1"
+    controller.operation.processors: "1"
     controller.repo.server.timeout.seconds: "120"
     # Ref: https://argo-cd.readthedocs.io/en/release-1.8/operator-manual/high_availability/#argocd-repo-server
     # It is commented for future analysis.
