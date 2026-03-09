@@ -1,5 +1,5 @@
 teleport-kube-agent:
-  proxyAddr: "tp.ronaldmiranda.com.br:443"
+  proxyAddr: "teleport.ronaldmiranda.com.br:443"
   kubeClusterName: cluster-oracle
   secretName: teleport-secret
   joinTokenSecret:
