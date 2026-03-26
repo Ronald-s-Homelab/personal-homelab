@@ -30,6 +30,12 @@ controller:
       labelSelector:
         matchLabels:
           app.kubernetes.io/component: application-controller
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 10s
 
 applicationSet:
   metrics:
@@ -50,6 +56,12 @@ repoServer:
       labelSelector:
         matchLabels:
           app.kubernetes.io/component: repo-server
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 10s
 
 dex:
   resources:
