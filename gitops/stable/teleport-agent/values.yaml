@@ -2,27 +2,12 @@ teleport-kube-agent:
   proxyAddr: "tp.ronaldmiranda.com.br:443"
   kubeClusterName: ronald-cluster
   secretName: teleport-secret
-  roles: kube,app,discovery,db
+  roles: kube,app,discovery
   log:
     format: json
   appResources:
     - labels:
         teleport-enabled: app
-  databases:
-    - name: "checker-db-rw"
-  
-      # Free-form description of the database proxy instance.
-      description: "RNLD CHECKER"
-      protocol: "postgres"
-  
-      # Database connection endpoint. Must be reachable from Database Service.
-      uri: "checker-db-rw.data.svc.cluster.local:5432"
-  
-      # Optional TLS configuration.
-      tls:
-        mode: insecure
-        server_name: checker-db-rw.data.svc.cluster.local
-        trust_system_cert_pool: false
   teleportConfig:
     discovery_service:
       poll_interval: 30s
