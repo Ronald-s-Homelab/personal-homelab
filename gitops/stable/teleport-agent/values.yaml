@@ -15,6 +15,7 @@ teleport-kube-agent:
   - types: ["app"]
     namespaces:
      - rnld
+     - data
      - rnld-logs
      - phpmyadmin
      - envoy-gateway-system
