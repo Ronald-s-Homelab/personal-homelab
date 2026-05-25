@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rnld-loki
+  namespace: argocd-system
+spec:
+  destination:
+    name: in-cluster
+    namespace: rnld-logs
+  project: default
+  sources:
+  - chart: loki
+    helm:
+      releaseName: main
+      valueFiles:
+      - $values/gitops/deploy/loki/values.yaml
+    repoURL: https://grafana.github.io/helm-charts
+    targetRevision: 6.48.0
+  - ref: values
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true

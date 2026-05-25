@@ -1,0 +1,72 @@
+backend:
+  replicas: 0
+chunksCache:
+  enabled: false
+deploymentMode: SingleBinary
+gateway:
+  replicas: 0
+loki:
+  analytics:
+    reporting_enabled: false
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
+  compactor:
+    delete_request_store: filesystem
+    retention_enabled: true
+    working_directory: /var/loki/compactor/retention
+  ingester:
+    chunk_encoding: snappy
+  limits_config:
+    retention_period: 365d
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        index:
+          period: 24h
+          prefix: loki_index_
+        object_store: s3
+        schema: v13
+        store: tsdb
+  server:
+    log_level: info
+  storage:
+    type: s3
+    bucketNames:
+      chunks: rnld-loki-chunks
+      ruler: rnld-loki-chunks
+      admin: rnld-loki-chunks
+    s3:
+      endpoint: ${R2_ENDPOINT}
+      region: auto
+      s3ForcePathStyle: true
+      signatureVersion: v4
+      insecure: false
+lokiCanary:
+  enabled: false
+read:
+  replicas: 0
+resultsCache:
+  enabled: false
+sidecar:
+  rules:
+    enabled: false
+singleBinary:
+  extraArgs:
+    - -config.expand-env=true
+  extraEnvFrom:
+    - secretRef:
+        name: loki-r2
+  nodeSelector:
+    displayName: oke-cqqba2zkswq-nvfsifnc3ta-sfyc5rpcfzq-0
+  persistence:
+    enabled: true
+    size: 50Gi
+    whenDeleted: Retain
+    whenScaled: Retain
+  replicas: 1
+test:
+  enabled: false
+write:
+  replicas: 0
+
