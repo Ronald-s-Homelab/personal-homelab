@@ -17,8 +17,22 @@ loki:
     working_directory: /var/loki/compactor/retention
   ingester:
     chunk_encoding: snappy
+    chunk_idle_period: 30m
+    max_chunk_age: 1h
+    chunk_target_size: 1572864
+    chunk_block_size: 262144
+  querier:
+    max_concurrent: 2
+  query_scheduler:
+    max_outstanding_requests_per_tenant: 100
   limits_config:
     retention_period: 365d
+    split_queries_by_interval: 24h
+    max_streams_per_user: 5000
+    max_global_streams_per_user: 5000
+    cardinality_limit: 100000
+    ingestion_rate_mb: 4
+    ingestion_burst_size_mb: 6
   schemaConfig:
     configs:
       - from: "2024-04-01"
@@ -54,6 +68,11 @@ sidecar:
 singleBinary:
   extraArgs:
     - -config.expand-env=true
+  extraEnv:
+    - name: GOMEMLIMIT
+      value: "450MiB"
+    - name: GOGC
+      value: "75"
   extraEnvFrom:
     - secretRef:
         name: loki-r2
@@ -65,6 +84,12 @@ singleBinary:
     whenDeleted: Retain
     whenScaled: Retain
   replicas: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
 test:
   enabled: false
 write:
