@@ -38,6 +38,19 @@ controller:
       scrapeTimeout: 10s
 
 applicationSet:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      memory: 128Mi
+  extraEnv:
+    - name: GOMEMLIMIT
+      value: "110MiB"
+    - name: GOGC
+      value: "50"
+  extraArgs:
+    - --concurrent-reconciliations=2
   metrics:
     enabled: true
     serviceMonitor:
