@@ -17,6 +17,7 @@ teleport-kube-agent:
      - rnld
      - data
      - rnld-logs
+     - rnld-transcript
      - phpmyadmin
      - envoy-gateway-system
     labels:
