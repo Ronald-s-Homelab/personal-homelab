@@ -176,10 +176,18 @@ configs:
 
     .login__content { background: transparent !important; }
     .login__content .argo__logo { display: none !important; }
+    /* Replace the default "Let's get stuff deployed!" copy.
+       font-size:0 collapses the original text node; ::after renders ours. */
     .login__text {
+      font-size: 0 !important;
       color: #ededed !important;
       font-weight: 600 !important;
       letter-spacing: -0.028em !important;
+    }
+    .login__text::after {
+      content: "Protect5M \00B7 Painel GitOps";
+      font-size: 2rem !important;
+      line-height: 1.15 !important;
     }
 
     .login__box {
