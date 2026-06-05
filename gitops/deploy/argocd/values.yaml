@@ -159,6 +159,67 @@ configs:
       g, Ronald-s-Homelab:devops, role:admin
     policy.default: role:readonly
 
+  # Custom login page — matches rnld-api-manager-web (Vercel-style dark + Geist + RNLD hex mark).
+  # The chart mounts this as custom.styles.css and sets ui.cssurl automatically.
+  styles: |
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=Geist+Mono:wght@400;500&display=swap');
+
+    .login {
+      background: #000 !important;
+      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0) !important;
+      background-size: 28px 28px !important;
+      background-position: -1px -1px !important;
+      font-family: "Geist", ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+      color: #ededed !important;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .login__content { background: transparent !important; }
+    .login__content .argo__logo { display: none !important; }
+    .login__text {
+      color: #ededed !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.028em !important;
+    }
+
+    .login__box {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0) 60%), #0a0a0a !important;
+      border: 1px solid #1a1a1a !important;
+      border-radius: 14px !important;
+      box-shadow: 0 30px 80px -20px rgba(0,0,0,0.9) !important;
+    }
+
+    /* Swap the Argo logo for the RNLD hex scope mark */
+    .login__logo .logo-image {
+      content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Cpath d='M48 18 L77 39 L66 73 L30 73 L19 39 Z' fill='none' stroke='%2322c55e' stroke-width='6' stroke-linejoin='round'/%3E%3Cg fill='%2322c55e'%3E%3Ccircle cx='77' cy='39' r='6'/%3E%3Ccircle cx='66' cy='73' r='6'/%3E%3Ccircle cx='30' cy='73' r='6'/%3E%3Ccircle cx='19' cy='39' r='6'/%3E%3C/g%3E%3Ccircle cx='48' cy='18' r='7.5' fill='%23000' stroke='%2322c55e' stroke-width='5'/%3E%3Cline x1='43' y1='23' x2='53' y2='13' stroke='%2322c55e' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") !important;
+      height: 64px !important;
+      width: auto !important;
+    }
+
+    /* Primary buttons (SSO + submit) -> white pill, like the manager's "Acessar o Painel" */
+    .login__box .argo-button {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: none !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.01em !important;
+      text-transform: none !important;
+    }
+    .login__box .argo-button:hover { background: #e5e5e5 !important; }
+
+    /* Inputs */
+    .login__box input {
+      background: #000 !important;
+      border: 1px solid #262626 !important;
+      border-radius: 8px !important;
+      color: #ededed !important;
+    }
+    .login__box input::placeholder { color: #525252 !important; }
+
+    /* Footer argo version mark -> recede */
+    .login__footer { opacity: 0.45 !important; }
+
 extraObjects:
   - apiVersion: external-secrets.io/v1beta1
     kind: ExternalSecret
