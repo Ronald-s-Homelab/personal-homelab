@@ -142,7 +142,7 @@ configs:
     server.rbac.log.enforce.enable: true
 
   params:
-    server.disable.auth: true
+    server.disable.auth: false
     server.insecure: true
     server.enable.gzip: true
     controller.status.processors: "1"
