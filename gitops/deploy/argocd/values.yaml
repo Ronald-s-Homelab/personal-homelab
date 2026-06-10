@@ -10,12 +10,26 @@ server:
         matchLabels:
           app.kubernetes.io/component: server
 
-  ingress:
+  httproute:
     enabled: true
-    tls: true
-    ingressClassName: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hostnames:
+    - argocd.rnld.dev
+    parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: rnld-api-gateway
+      namespace: rnld
+    rules:
+    - backendRefs:
+      - group: ""
+        kind: Service
+        name: argocd-server
+        port: 80
+        weight: 1
+      matches:
+      - path:
+          type: PathPrefix
+          value: /
 
 notifications:
   enabled: false
@@ -57,6 +71,15 @@ applicationSet:
       enabled: true
       interval: 30s
       scrapeTimeout: 10s
+  httproute:
+    enabled: true
+    hostnames:
+    - appset.rnld.dev
+    parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: rnld-api-gateway
+      namespace: rnld
 
 repoServer:
   autoscaling:
