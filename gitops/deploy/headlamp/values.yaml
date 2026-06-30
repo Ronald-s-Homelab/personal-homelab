@@ -1,0 +1,9 @@
+httpRoute:
+  enabled: true
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: rnld-api-gateway
+    namespace: rnld
+  hostnames:
+  - headlamp.rnld.dev
