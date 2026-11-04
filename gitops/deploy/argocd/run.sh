@@ -12,7 +12,7 @@ fi
 
 helmChartName='argo-cd'
 helmReleaseName="self-argocd-in-cluster"
-helmChartVersion='5.52.0'
+helmChartVersion='10.12.0'
 helmChartRepo='https://argoproj.github.io/argo-helm'
 chartNamespace="argocd-system"
 
@@ -42,4 +42,3 @@ fi
 
 echo "Installing/Upgrading Helm Chart ${helmReleaseName} in ${KUBE_CONTEXT} Context Kubernetes"
 helm $command ${args[*]}
-rm values.yaml.tmp

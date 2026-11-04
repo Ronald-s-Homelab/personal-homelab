@@ -37,6 +37,17 @@ notifications:
 controller:
   replicas: 1
   enableStatefulSet: true
+  # Steady state ~500Mi RSS (31 apps / ~2.5k cached objects). GOMEMLIMIT lets the
+  # Go runtime return idle heap instead of holding it until the limit.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      memory: 768Mi
+  env:
+    - name: GOMEMLIMIT
+      value: "640MiB"
   topologySpreadConstraints:
     - maxSkew: 1
       topologyKey: kubernetes.io/hostname
@@ -161,6 +172,12 @@ configs:
       |
       jqPathExpressions:
       - '.webhooks[]?.clientConfig.caBundle'
+
+    # kubernetes-replicator rewrites these on every replication; don't trigger reconciles for them.
+    resource.customizations.ignoreResourceUpdates.Secret: |
+      jsonPointers:
+      - /metadata/annotations/replicator.v1.mittwald.de~1replicated-at
+      - /metadata/annotations/replicator.v1.mittwald.de~1replicated-from-version
 
     server.rbac.log.enforce.enable: true
 
@@ -295,7 +312,7 @@ applications:
     sources:
       - repoURL: "https://argoproj.github.io/argo-helm"
         chart: argo-cd
-        targetRevision: 10.11.6
+        targetRevision: 10.12.0
         helm:
           valueFiles:
             - $values/gitops/deploy/argocd/values.yaml
