@@ -1,5 +1,6 @@
 cert-manager:
-  installCRDs: true
+  crds:
+    enabled: false
   replicaCount: 1
   nodeSelector:
     kubernetes.io/os: linux

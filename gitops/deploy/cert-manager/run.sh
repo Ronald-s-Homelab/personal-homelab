@@ -36,5 +36,8 @@ else
   args+=('--replace')
 fi
 
+echo "Fetching chart dependencies for ${helmChartRepo}"
+helm dependency update "$helmChartRepo"
+
 echo "Installing/Upgrading Helm Chart ${helmReleaseName} in ${KUBE_CONTEXT} Context Kubernetes"
 helm $command ${args[*]}
