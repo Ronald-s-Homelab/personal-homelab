@@ -1,0 +1,38 @@
+# Overrides do homelab sobre values.yaml + values-cnpg-bots-db.yaml do chart.
+#
+# Exposição: dbmngr.internal.rnld.dev é servido pelo Teleport (app access,
+# TLS terminado no proxy). O Teleport aponta para o envoy do Gateway
+# rnld/rnld-api-gateway (ver manifests/teleport-service.yaml), que aplica o
+# HTTPRoute abaixo com o split /api -> backend, resto -> frontend.
+
+httproute:
+  enabled: true
+  parentRefs:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    name: rnld-api-gateway
+    namespace: rnld
+    # Tráfego chega do Teleport em HTTP puro (porta 80 do envoy).
+    sectionName: http
+  hostnames:
+  - dbmngr.internal.rnld.dev
+
+backend:
+  replicaCount: 1
+  env:
+    PORT: "8080"
+    JWT_ISSUER: postgres-manager
+    JWT_TTL: 168h
+    LOG_LEVEL: info
+    ENV: production
+    COOKIE_SECURE: "true"
+    FRONTEND_URL: https://dbmngr.internal.rnld.dev
+    CORS_ALLOWED_ORIGINS: https://dbmngr.internal.rnld.dev
+    GITHUB_OAUTH_CALLBACK_URL: https://dbmngr.internal.rnld.dev/api/auth/github/callback
+  # Criada pelo ExternalSecret manifests/externalsecrets.yaml (JWT_SECRET).
+  # GitHub OAuth é configurado pelo wizard em /setup.
+  secretRef:
+    name: pgsqlmanager-backend-secret
+
+frontend:
+  replicaCount: 1

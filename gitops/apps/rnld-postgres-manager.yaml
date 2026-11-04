@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rnld-postgres-manager
+  namespace: argocd-system
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    name: in-cluster
+    namespace: rnld
+  project: default
+  sources:
+  # Chart direto do repo da app; valores por ambiente ficam aqui.
+  - repoURL: https://github.com/ronaldmiranda/rnld-postgres-manager.git
+    targetRevision: main
+    path: helm/rnld-postgres-manager
+    helm:
+      releaseName: rnld-postgres-manager-dpl
+      valueFiles:
+      - values.yaml
+      - values-cnpg-bots-db.yaml
+      - $values/gitops/deploy/rnld-postgres-manager/values.yaml
+  - ref: values
+    repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+  # ExternalSecrets (Doppler) + Service de exposição via Teleport.
+  - repoURL: https://github.com/Ronald-s-Homelab/personal-homelab.git
+    targetRevision: main
+    path: gitops/deploy/rnld-postgres-manager/manifests
+  syncPolicy:
+    syncOptions:
+    - ServerSideApply=true
+  ignoreDifferences:
+  # Réplicas geridas por HPA quando autoscaling.enabled.
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas

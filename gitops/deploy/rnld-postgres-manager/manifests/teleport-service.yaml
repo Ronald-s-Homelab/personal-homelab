@@ -1,0 +1,36 @@
+# Publica dbmngr.internal.rnld.dev no Teleport apontando para o envoy do
+# Gateway rnld/rnld-api-gateway (e não direto para um Service da app), porque
+# a app precisa do split /api -> backend no mesmo host, que é feito pelo
+# HTTPRoute do chart. O Host é reescrito para casar com o hostname do route.
+#
+# Fica em envoy-gateway-system porque o selector precisa alcançar os pods do
+# envoy; esse namespace já está na kubernetesDiscovery do teleport-agent.
+apiVersion: v1
+kind: Service
+metadata:
+  name: rnld-postgres-manager-teleport
+  namespace: envoy-gateway-system
+  labels:
+    rnld-apps: teleport
+    teleport-enabled: app
+  annotations:
+    teleport.dev/name: dbmngr
+    teleport.dev/port: "80"
+    teleport.dev/public-addr: dbmngr.internal.rnld.dev
+    teleport.dev/app-rewrite: |
+      headers:
+      - name: "Host"
+        value: "dbmngr.internal.rnld.dev"
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/component: proxy
+    app.kubernetes.io/managed-by: envoy-gateway
+    app.kubernetes.io/name: envoy
+    gateway.envoyproxy.io/owning-gateway-name: rnld-api-gateway
+    gateway.envoyproxy.io/owning-gateway-namespace: rnld
+  ports:
+  - name: http
+    port: 80
+    targetPort: 10080
+    protocol: TCP
